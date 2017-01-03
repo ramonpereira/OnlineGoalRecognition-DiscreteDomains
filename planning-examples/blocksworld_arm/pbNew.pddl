@@ -1,0 +1,6 @@
+(define (problem pbTemplate)
+   (:domain blocksworld)
+   (:objects f g d e b c a  )
+   (:init (ontable d) (ontable f) (on g e) (on e f) (on a d) (on c g) (clear a) (holding b) (clear c) )
+   (:goal (and (on d a) (on e b) (on f d) (on a c) (on b f) (on c g) ) )
+)
