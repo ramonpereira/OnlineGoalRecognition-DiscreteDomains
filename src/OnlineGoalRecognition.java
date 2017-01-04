@@ -81,6 +81,10 @@ public abstract class OnlineGoalRecognition {
 		return ff.plan(gp, false);
 	}
 	
+	void computeRecognitionResults(){
+		
+	}
+	
 	public float match(float mG, float iG){
 		return (iG/mG);
 	}

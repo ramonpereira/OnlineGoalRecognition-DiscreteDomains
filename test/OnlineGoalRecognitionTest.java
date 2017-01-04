@@ -14,6 +14,8 @@ import domain.DomainName;
 
 public class OnlineGoalRecognitionTest {
 
+	public static String GOALRECOGNITION_PROBLEM = "experiments/easy-ipc-grid/easy-ipc-grid_p5-10-10_hyp-2_full.tar.bz2";
+	
 	@Test
 	public void doPlanUsingKPlanning(){
 		DomainProblemAdapter adapter = DomainProblemAdapter.newInstance(DomainProblemUtil.getDomainProblem("easy_ipc_grid", 1));
@@ -40,7 +42,7 @@ public class OnlineGoalRecognitionTest {
 	
 	@Test
 	public void testNaiveOnlineGoalRecognition(){
-		NaiveOnlineGoalRecognition naiveGoalRecognition = new NaiveOnlineGoalRecognition("experiments/sokoban/sokoban_p01_hyp-1_full.tar.bz2");
+		NaiveOnlineGoalRecognition naiveGoalRecognition = new NaiveOnlineGoalRecognition(GOALRECOGNITION_PROBLEM);
 		try {
 			naiveGoalRecognition.onlineRecognize();
 		} catch (UnreachableGoalException e) {
@@ -49,8 +51,18 @@ public class OnlineGoalRecognitionTest {
 	}
 	
 	@Test
+	public void testOnlineGoalRecognitionBaseLine(){
+		OnlineGoalRecognitionMirroringBaseline goalRecognitionBaseline = new OnlineGoalRecognitionMirroringBaseline(GOALRECOGNITION_PROBLEM);
+		try {
+			goalRecognitionBaseline.onlineRecognize();
+		} catch (UnreachableGoalException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
 	public void testOnlineGoalRecognitionNoRecomputation(){
-		OnlineGoalRecognitionMirroringBaseline goalRecognitionNoRecomputation = new OnlineGoalRecognitionMirroringBaseline("experiments/easy-ipc-grid/easy-ipc-grid_p10-10-10_hyp-0_full.tar.bz2");
+		OnlineGoalRecognitionMirroringNoRecomputation goalRecognitionNoRecomputation = new OnlineGoalRecognitionMirroringNoRecomputation(GOALRECOGNITION_PROBLEM);
 		try {
 			goalRecognitionNoRecomputation.onlineRecognize();
 		} catch (UnreachableGoalException e) {
