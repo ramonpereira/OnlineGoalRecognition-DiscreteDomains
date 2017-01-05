@@ -1,6 +1,0 @@
-(define (problem pb99)
-   (:domain blocksworld)
-   (:objects a b)
-   (:init (handempty) (ontable a) (on b a) (clear b))
-   (:goal (and (a b)) )
-)

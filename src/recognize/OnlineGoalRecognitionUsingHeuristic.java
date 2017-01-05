@@ -44,7 +44,7 @@ public class OnlineGoalRecognitionUsingHeuristic extends OnlineGoalRecognition {
 			observationsBuffer.add(o);
 			currentState = (STRIPSState) currentState.apply(o);
 			float sumOfScores = 0f;
-			if(topRankedGoal == null || recompute(currentState, topRankedGoal, candidateGoals)){
+			if(recompute(currentState, topRankedGoal, candidateGoals)){
 				goalsToScores = new HashMap<>();
 				for(GroundFact goal: this.candidateGoals){
 					System.out.println("\n\t # Goal:" + goal);
@@ -102,13 +102,16 @@ public class OnlineGoalRecognitionUsingHeuristic extends OnlineGoalRecognition {
 	}
 	
 	private boolean recompute(STRIPSState currentState, GroundFact topRankedGoal, List<GroundFact> candidateGoals) throws UnreachableGoalException{
+		if(topRankedGoal == null)
+			return true;
+		
 		Heuristic heuristic = new FFHeuristic(groundProblem, currentState.getFacts());
 		int estimatedDistanceTopRankedGoal = heuristic.getEstimate(topRankedGoal);
 		int minimumEstimatedDistance = Integer.MAX_VALUE;
 		for(GroundFact goal: candidateGoals){
 			if(goal.equals(topRankedGoal))
 				continue;
-			
+
 			heuristic = new FFHeuristic(groundProblem, currentState.getFacts());
 			int estimateOfG = heuristic.getEstimate(goal);
 			if(estimateOfG < minimumEstimatedDistance)

@@ -12,7 +12,7 @@ import experiments.OnlineGoalRecognitionBenchmark;
 public class OnlineGoalRecognitionExperiment {
 
 	@Test
-	public void experimentBaseLineApproach(){
+	public void runExperimentsBaseLineApproach(){
 		try {
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.BASELINE, "experiments/campus/");
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.BASELINE, "experiments/easy-ipc-grid/");
@@ -25,7 +25,7 @@ public class OnlineGoalRecognitionExperiment {
 	}
 	
 	@Test
-	public void experimentNaiveApproach(){
+	public void runExperimentsNaiveApproach(){
 		try {
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.NAIVE, "experiments/campus/");
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.NAIVE, "experiments/easy-ipc-grid/");
@@ -38,7 +38,7 @@ public class OnlineGoalRecognitionExperiment {
 	}
 	
 	@Test
-	public void experimentNoRecomputationApproach(){
+	public void runExperimentsNoRecomputationApproach(){
 		try {
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.NO_RECOMPUTATION, "experiments/campus/");
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.NO_RECOMPUTATION, "experiments/easy-ipc-grid/");
@@ -51,7 +51,7 @@ public class OnlineGoalRecognitionExperiment {
 	}
 	
 	@Test
-	public void experimentHeuristicApproach(){
+	public void runExperimentsHeuristicApproach(){
 		try {
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.HEURISTIC, "experiments/campus/");
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.HEURISTIC, "experiments/easy-ipc-grid/");

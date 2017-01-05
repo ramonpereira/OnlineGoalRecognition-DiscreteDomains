@@ -13,7 +13,6 @@ import javaff.planning.STRIPSState;
 import javaff.search.UnreachableGoalException;
 import bean.GoalRecognitionResult;
 
-
 public class OnlineGoalRecognitionMirroringNoRecomputation extends OnlineGoalRecognition {
 
 	public OnlineGoalRecognitionMirroringNoRecomputation(String fileName) {
