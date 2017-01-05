@@ -1,3 +1,4 @@
+package recognize;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -18,6 +19,7 @@ import javaff.data.Plan;
 import javaff.planning.STRIPSState;
 import javaff.search.UnreachableGoalException;
 import parser.PDDLParser;
+import bean.GoalRecognitionResult;
 
 public abstract class OnlineGoalRecognition {
 
@@ -29,7 +31,7 @@ public abstract class OnlineGoalRecognition {
 	protected String recognitionFileName;
 	protected STRIPSState initialSTRIPSState;
 	
-	protected abstract void recognizeOnline() throws UnreachableGoalException;
+	protected abstract GoalRecognitionResult recognizeOnline() throws UnreachableGoalException;
 	
 	public OnlineGoalRecognition(String fileName){
 		try{
@@ -84,7 +86,6 @@ public abstract class OnlineGoalRecognition {
 	}
 	
 	void computeRecognitionResults(){
-		
 	}
 	
 	public float match(float mG, float iG){

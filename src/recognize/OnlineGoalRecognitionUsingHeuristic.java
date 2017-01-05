@@ -1,3 +1,4 @@
+package recognize;
 import heuristic.FFHeuristic;
 import heuristic.Heuristic;
 
@@ -13,6 +14,7 @@ import javaff.data.GroundFact;
 import javaff.data.Plan;
 import javaff.planning.STRIPSState;
 import javaff.search.UnreachableGoalException;
+import bean.GoalRecognitionResult;
 
 public class OnlineGoalRecognitionUsingHeuristic extends OnlineGoalRecognition {
 
@@ -21,7 +23,7 @@ public class OnlineGoalRecognitionUsingHeuristic extends OnlineGoalRecognition {
 	}
 	
 	@Override
-	public void recognizeOnline() throws UnreachableGoalException{
+	public GoalRecognitionResult recognizeOnline() throws UnreachableGoalException{
 		Map<GroundFact, Plan> goalsIdealPlans= new HashMap<>();
 		Map<GroundFact, List<Action>> mObservationsGoals = new HashMap<>();
 		List<Action> observationsBuffer = new ArrayList<>();
@@ -31,6 +33,7 @@ public class OnlineGoalRecognitionUsingHeuristic extends OnlineGoalRecognition {
 		float topFirstFrequency = 0;
 		GroundFact topRankedGoal = null;
 		Map<GroundFact, Float> goalsToScores = new HashMap<>();
+		float convergenceToTopRankedGoal = 0;
 		for(GroundFact goal: this.candidateGoals){
 			System.out.println("\t # Goal:" + goal);
 			Plan idealPlan = doPlanJavaFF(initialState, goal);
@@ -86,12 +89,16 @@ public class OnlineGoalRecognitionUsingHeuristic extends OnlineGoalRecognition {
 			if(recognizedGoals.contains(this.realGoal)){
 				topFirstFrequency++;
 				topRankedGoal = this.realGoal;
-			}
+				convergenceToTopRankedGoal++;
+			} else convergenceToTopRankedGoal = 0;
 		}
-		float totalFrequency = (topFirstFrequency/observationCounter);
-		System.out.println("\n$$$$####> Frequecy: " + totalFrequency);
-		System.out.println("$$$$####> Top First times: " + topFirstFrequency);
-		System.out.println("$$$$####> Total observed actions: " + observationCounter);
+		float topFirstRankedPercent  = (topFirstFrequency/observationCounter);
+		float convergencePercent = (convergenceToTopRankedGoal/observationCounter);
+		System.out.println("\n$$$$####> Top First Ranked Percent (%): " + topFirstRankedPercent);
+		System.out.println("$$$$####> Convergence Percent (%): " + convergencePercent);
+		System.out.println("$$$$####> Top Ranked First times: " + topFirstFrequency);
+		System.out.println("$$$$####> Total Observed Actions: " + observationCounter);
+		return new GoalRecognitionResult(topFirstRankedPercent, convergencePercent);
 	}
 	
 	private boolean recompute(STRIPSState currentState, GroundFact topRankedGoal, List<GroundFact> candidateGoals) throws UnreachableGoalException{
@@ -108,6 +115,5 @@ public class OnlineGoalRecognitionUsingHeuristic extends OnlineGoalRecognition {
 				minimumEstimatedDistance = estimateOfG;
 		}
 		return !(estimatedDistanceTopRankedGoal <= minimumEstimatedDistance);
-		
 	}
 }

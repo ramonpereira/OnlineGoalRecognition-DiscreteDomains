@@ -1,3 +1,4 @@
+package recognize;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +11,7 @@ import javaff.data.GroundFact;
 import javaff.data.Plan;
 import javaff.planning.STRIPSState;
 import javaff.search.UnreachableGoalException;
+import bean.GoalRecognitionResult;
 
 public class NaiveOnlineGoalRecognition extends OnlineGoalRecognition {
 
@@ -18,12 +20,13 @@ public class NaiveOnlineGoalRecognition extends OnlineGoalRecognition {
 	}
 	
 	@Override
-	public void recognizeOnline() throws UnreachableGoalException{
+	public GoalRecognitionResult recognizeOnline() throws UnreachableGoalException{
 		Map<GroundFact, List<Action>> mObservationsGoals = new HashMap<>();
 		STRIPSState currentState = this.initialSTRIPSState;
 		System.out.println("#> Real Goal: " + this.realGoal);
 		float observationCounter = 0;
 		float topFirstFrequency = 0;
+		float convergenceToTopRankedGoal = 0;
 		for(Action o: this.observations){
 			System.out.println("$> Observation (" + (int) observationCounter + ") :" + o);
 			observationCounter++;
@@ -68,12 +71,17 @@ public class NaiveOnlineGoalRecognition extends OnlineGoalRecognition {
 				if(goalsProbabilities.get(goal) == highestProbability)
 					recognizedGoals.add(goal);
 
-			if(recognizedGoals.contains(this.realGoal))
+			if(recognizedGoals.contains(this.realGoal)){
 				topFirstFrequency++;
+				convergenceToTopRankedGoal++;
+			} else convergenceToTopRankedGoal = 0;
 		}
-		float totalFrequency = (topFirstFrequency/observationCounter);
-		System.out.println("\n$$$$####> Frequecy: " + totalFrequency);
-		System.out.println("$$$$####> Top First times: " + topFirstFrequency);
-		System.out.println("$$$$####> Total observed actions: " + observationCounter);
+		float topFirstRankedPercent  = (topFirstFrequency/observationCounter);
+		float convergencePercent = (convergenceToTopRankedGoal/observationCounter);
+		System.out.println("\n$$$$####> Top First Ranked Percent (%): " + topFirstRankedPercent);
+		System.out.println("$$$$####> Convergence Percent (%): " + convergencePercent);
+		System.out.println("$$$$####> Top Ranked First times: " + topFirstFrequency);
+		System.out.println("$$$$####> Total Observed Actions: " + observationCounter);
+		return new GoalRecognitionResult(topFirstRankedPercent, convergencePercent);
 	}
 }

@@ -10,6 +10,10 @@ import kplanning.util.DomainProblemUtil;
 import org.junit.Test;
 
 import parser.PDDLParser;
+import recognize.NaiveOnlineGoalRecognition;
+import recognize.OnlineGoalRecognitionMirroringBaseline;
+import recognize.OnlineGoalRecognitionMirroringNoRecomputation;
+import recognize.OnlineGoalRecognitionUsingHeuristic;
 import domain.DomainName;
 
 public class OnlineGoalRecognitionTest {
@@ -18,8 +22,8 @@ public class OnlineGoalRecognitionTest {
 	//public static String GOALRECOGNITION_PROBLEM = "experiments/logistics/logistics_p03_hyp-1_full.tar.bz2";
 	//public static String GOALRECOGNITION_PROBLEM = "experiments/intrusion-detection/intrusion-detection_p20_hyp-18_full.tar.bz2";
 	//public static String GOALRECOGNITION_PROBLEM = "experiments/blocks-world/block-words_p01_hyp-0_full.tar.bz2";
-	//public static String GOALRECOGNITION_PROBLEM = "experiments/campus/bui-campus_generic_hyp-0_full_74.tar.bz2";
-	public static String GOALRECOGNITION_PROBLEM = "experiments/kitchen/kitchen_generic_hyp-0_full_10.tar.bz2";
+	public static String GOALRECOGNITION_PROBLEM = "experiments/campus/bui-campus_generic_hyp-0_full_74.tar.bz2";
+	//public static String GOALRECOGNITION_PROBLEM = "experiments/kitchen/kitchen_generic_hyp-0_full_10.tar.bz2";
 	
 	@Test
 	public void doPlanUsingKPlanning(){
