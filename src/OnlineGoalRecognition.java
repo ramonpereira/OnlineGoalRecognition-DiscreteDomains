@@ -29,6 +29,8 @@ public abstract class OnlineGoalRecognition {
 	protected String recognitionFileName;
 	protected STRIPSState initialSTRIPSState;
 	
+	protected abstract void recognizeOnline() throws UnreachableGoalException;
+	
 	public OnlineGoalRecognition(String fileName){
 		try{
 			this.recognitionFileName = fileName;

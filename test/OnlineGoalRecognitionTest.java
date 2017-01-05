@@ -14,7 +14,12 @@ import domain.DomainName;
 
 public class OnlineGoalRecognitionTest {
 
-	public static String GOALRECOGNITION_PROBLEM = "experiments/easy-ipc-grid/easy-ipc-grid_p5-10-10_hyp-2_full.tar.bz2";
+	//public static String GOALRECOGNITION_PROBLEM = "experiments/easy-ipc-grid/easy-ipc-grid_p10-10-10_hyp-7_full.tar.bz2";
+	//public static String GOALRECOGNITION_PROBLEM = "experiments/logistics/logistics_p03_hyp-1_full.tar.bz2";
+	//public static String GOALRECOGNITION_PROBLEM = "experiments/intrusion-detection/intrusion-detection_p20_hyp-18_full.tar.bz2";
+	//public static String GOALRECOGNITION_PROBLEM = "experiments/blocks-world/block-words_p01_hyp-0_full.tar.bz2";
+	//public static String GOALRECOGNITION_PROBLEM = "experiments/campus/bui-campus_generic_hyp-0_full_74.tar.bz2";
+	public static String GOALRECOGNITION_PROBLEM = "experiments/kitchen/kitchen_generic_hyp-0_full_10.tar.bz2";
 	
 	@Test
 	public void doPlanUsingKPlanning(){
@@ -44,7 +49,7 @@ public class OnlineGoalRecognitionTest {
 	public void testNaiveOnlineGoalRecognition(){
 		NaiveOnlineGoalRecognition naiveGoalRecognition = new NaiveOnlineGoalRecognition(GOALRECOGNITION_PROBLEM);
 		try {
-			naiveGoalRecognition.onlineRecognize();
+			naiveGoalRecognition.recognizeOnline();
 		} catch (UnreachableGoalException e) {
 			e.printStackTrace();
 		}
@@ -54,7 +59,7 @@ public class OnlineGoalRecognitionTest {
 	public void testOnlineGoalRecognitionBaseLine(){
 		OnlineGoalRecognitionMirroringBaseline goalRecognitionBaseline = new OnlineGoalRecognitionMirroringBaseline(GOALRECOGNITION_PROBLEM);
 		try {
-			goalRecognitionBaseline.onlineRecognize();
+			goalRecognitionBaseline.recognizeOnline();
 		} catch (UnreachableGoalException e) {
 			e.printStackTrace();
 		}
@@ -64,7 +69,17 @@ public class OnlineGoalRecognitionTest {
 	public void testOnlineGoalRecognitionNoRecomputation(){
 		OnlineGoalRecognitionMirroringNoRecomputation goalRecognitionNoRecomputation = new OnlineGoalRecognitionMirroringNoRecomputation(GOALRECOGNITION_PROBLEM);
 		try {
-			goalRecognitionNoRecomputation.onlineRecognize();
+			goalRecognitionNoRecomputation.recognizeOnline();
+		} catch (UnreachableGoalException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testOnlineGoalRecognitionUsingHeuristic(){
+		OnlineGoalRecognitionUsingHeuristic goalRecognition = new OnlineGoalRecognitionUsingHeuristic(GOALRECOGNITION_PROBLEM);
+		try {
+			goalRecognition.recognizeOnline();
 		} catch (UnreachableGoalException e) {
 			e.printStackTrace();
 		}

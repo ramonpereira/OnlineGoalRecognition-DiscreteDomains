@@ -1,7 +1,9 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javaff.data.Action;
 import javaff.data.GroundFact;
@@ -15,7 +17,8 @@ public class OnlineGoalRecognitionMirroringBaseline extends OnlineGoalRecognitio
 		super(fileName);
 	}
 	
-	public void onlineRecognize() throws UnreachableGoalException{
+	@Override
+	public void recognizeOnline() throws UnreachableGoalException{
 		Map<GroundFact, List<Action>> mObservationsGoals = new HashMap<>();
 		Map<GroundFact, Plan> goalsIdealPlans= new HashMap<>();
 		STRIPSState currentState = this.initialSTRIPSState;
@@ -28,7 +31,7 @@ public class OnlineGoalRecognitionMirroringBaseline extends OnlineGoalRecognitio
 			goalsIdealPlans.put(goal, idealPlan);
 		}
 		for(Action o: this.observations){
-			System.out.println("$> Observation (" + observationCounter + ") :" + o);
+			System.out.println("$> Observation (" + (int) observationCounter + ") :" + o);
 			observationCounter++;
 			currentState = (STRIPSState) currentState.apply(o);
 			Map<GroundFact, Float> goalsToScores = new HashMap<>();
@@ -56,15 +59,22 @@ public class OnlineGoalRecognitionMirroringBaseline extends OnlineGoalRecognitio
 			float normalizingFactor = (1/sumOfScores);
 			GroundFact mostLikelyGoal = this.candidateGoals.get(0);
 			float highestProbability = (normalizingFactor*goalsToScores.get(mostLikelyGoal));
+			Map<GroundFact, Float> goalsProbabilities = new HashMap<>();
 			for(GroundFact goal: this.candidateGoals){
 				float probabilityOfG = (normalizingFactor*goalsToScores.get(goal));
 				System.out.println("\t - Probability of " + goal + ": " + probabilityOfG);
+				goalsProbabilities.put(goal, probabilityOfG);
 				if(probabilityOfG > highestProbability){
 					mostLikelyGoal = goal;
 					highestProbability = probabilityOfG;
 				}
 			}
-			if(this.realGoal.equals(mostLikelyGoal))
+			Set<GroundFact> recognizedGoals = new HashSet<>();
+			for(GroundFact goal: goalsProbabilities.keySet())
+				if(goalsProbabilities.get(goal) == highestProbability)
+					recognizedGoals.add(goal);
+
+			if(recognizedGoals.contains(this.realGoal))
 				topFirstFrequency++;
 		}
 		float totalFrequency = (topFirstFrequency/observationCounter);

@@ -1,3 +1,6 @@
+import heuristic.FFHeuristic;
+import heuristic.Heuristic;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,22 +14,23 @@ import javaff.data.Plan;
 import javaff.planning.STRIPSState;
 import javaff.search.UnreachableGoalException;
 
+public class OnlineGoalRecognitionUsingHeuristic extends OnlineGoalRecognition {
 
-public class OnlineGoalRecognitionMirroringNoRecomputation extends OnlineGoalRecognition {
-
-	public OnlineGoalRecognitionMirroringNoRecomputation(String fileName) {
+	public OnlineGoalRecognitionUsingHeuristic(String fileName) {
 		super(fileName);
 	}
 	
 	@Override
 	public void recognizeOnline() throws UnreachableGoalException{
-		Map<GroundFact, List<Action>> mObservationsGoals = new HashMap<>();
 		Map<GroundFact, Plan> goalsIdealPlans= new HashMap<>();
-		Map<GroundFact, Plan> goalsMPlusPlans= new HashMap<>();
+		Map<GroundFact, List<Action>> mObservationsGoals = new HashMap<>();
+		List<Action> observationsBuffer = new ArrayList<>();
 		STRIPSState currentState = this.initialSTRIPSState;
 		System.out.println("#> Real Goal: " + this.realGoal);
 		int observationCounter = 0;
 		float topFirstFrequency = 0;
+		GroundFact topRankedGoal = null;
+		Map<GroundFact, Float> goalsToScores = new HashMap<>();
 		for(GroundFact goal: this.candidateGoals){
 			System.out.println("\t # Goal:" + goal);
 			Plan idealPlan = doPlanJavaFF(initialState, goal);
@@ -34,19 +38,15 @@ public class OnlineGoalRecognitionMirroringNoRecomputation extends OnlineGoalRec
 		}
 		for(Action o: this.observations){
 			System.out.println("$> Observation (" + (int) observationCounter + ") :" + o);
+			observationsBuffer.add(o);
 			currentState = (STRIPSState) currentState.apply(o);
-			Map<GroundFact, Float> goalsToScores = new HashMap<>();
 			float sumOfScores = 0f;
-			for(GroundFact goal: this.candidateGoals){
-				System.out.println("\n\t # Goal:" + goal);
-				Plan idealPlanOfG = goalsIdealPlans.get(goal);
-				System.out.println("\t # Ideal Plan of G: " + idealPlanOfG.getPlanLength());
-				float mG = 0;
-				if(observationCounter == 0){
-					Plan mPlus = doPlanJavaFF(currentState.getFacts(), goal);
-					goalsMPlusPlans.put(goal, mPlus);
-					mG = mPlus.getPlanLength()+1;
-				} else {
+			if(topRankedGoal == null || recompute(currentState, topRankedGoal, candidateGoals)){
+				goalsToScores = new HashMap<>();
+				for(GroundFact goal: this.candidateGoals){
+					System.out.println("\n\t # Goal:" + goal);
+					Plan idealPlanOfG = goalsIdealPlans.get(goal);
+					System.out.println("\t # Ideal Plan of G: " + idealPlanOfG.getPlanLength());
 					List<Action> mMinus = mObservationsGoals.get(goal);
 					if(mMinus == null){
 						List<Action> mMinusNew = new ArrayList<Action>();
@@ -54,20 +54,19 @@ public class OnlineGoalRecognitionMirroringNoRecomputation extends OnlineGoalRec
 						mMinusNew.add(o);
 						mObservationsGoals.put(goal, mMinusNew);
 					} else mMinus.add(o);
-					Plan mGPlus = goalsMPlusPlans.get(goal);
-					if(containsActions(mGPlus, mMinus))
-						mG = mGPlus.getPlanLength()+1;
-				}
-				float score = 0;
-				if(mG > 0)
-					score = this.match(mG, idealPlanOfG.getPlanLength());
-				System.out.println("\t @@@@ Score: " + score);
-				sumOfScores += score;
-				goalsToScores.put(goal, score);
+					Plan mPlus = doPlanJavaFF(currentState.getFacts(), goal);
+					System.out.println("\t # mMinus: " + mMinus.size());
+					System.out.println("\t # mPlus: " + mPlus.getPlanLength());
+					float mG = mMinus.size() + mPlus.getPlanLength();
+					float score = this.match(mG, idealPlanOfG.getPlanLength());
+					System.out.println("\t @@@@ Score: " + score);
+					sumOfScores += score;
+					goalsToScores.put(goal, score);
+				}				
 			}
 			observationCounter++;
 			float normalizingFactor = (1/sumOfScores);
-			GroundFact mostLikelyGoal = this.candidateGoals.get(0);
+			GroundFact mostLikelyGoal = (topRankedGoal == null ? this.candidateGoals.get(0) : topRankedGoal);
 			float highestProbability = (normalizingFactor*goalsToScores.get(mostLikelyGoal));
 			Map<GroundFact, Float> goalsProbabilities = new HashMap<>();
 			for(GroundFact goal: this.candidateGoals){
@@ -83,9 +82,11 @@ public class OnlineGoalRecognitionMirroringNoRecomputation extends OnlineGoalRec
 			for(GroundFact goal: goalsProbabilities.keySet())
 				if(goalsProbabilities.get(goal) == highestProbability)
 					recognizedGoals.add(goal);
-			
-			if(recognizedGoals.contains(this.realGoal))
+
+			if(recognizedGoals.contains(this.realGoal)){
 				topFirstFrequency++;
+				topRankedGoal = this.realGoal;
+			}
 		}
 		float totalFrequency = (topFirstFrequency/observationCounter);
 		System.out.println("\n$$$$####> Frequecy: " + totalFrequency);
@@ -93,10 +94,20 @@ public class OnlineGoalRecognitionMirroringNoRecomputation extends OnlineGoalRec
 		System.out.println("$$$$####> Total observed actions: " + observationCounter);
 	}
 	
-	private boolean containsActions(Plan mGPlus, List<Action> observations){
-		for(int i=0;i<observations.size();i++)
-			if(!observations.get(i).toString().equalsIgnoreCase(mGPlus.getActions().get(i).toString()))
-				return false;
-		return true;
+	private boolean recompute(STRIPSState currentState, GroundFact topRankedGoal, List<GroundFact> candidateGoals) throws UnreachableGoalException{
+		Heuristic heuristic = new FFHeuristic(groundProblem, currentState.getFacts());
+		int estimatedDistanceTopRankedGoal = heuristic.getEstimate(topRankedGoal);
+		int minimumEstimatedDistance = Integer.MAX_VALUE;
+		for(GroundFact goal: candidateGoals){
+			if(goal.equals(topRankedGoal))
+				continue;
+			
+			heuristic = new FFHeuristic(groundProblem, currentState.getFacts());
+			int estimateOfG = heuristic.getEstimate(goal);
+			if(estimateOfG < minimumEstimatedDistance)
+				minimumEstimatedDistance = estimateOfG;
+		}
+		return !(estimatedDistanceTopRankedGoal <= minimumEstimatedDistance);
+		
 	}
 }
