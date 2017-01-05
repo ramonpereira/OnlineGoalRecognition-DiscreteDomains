@@ -1,3 +1,4 @@
+package recognize;
 import static org.junit.Assert.assertTrue;
 import javaff.JavaFF;
 import javaff.data.GroundProblem;
