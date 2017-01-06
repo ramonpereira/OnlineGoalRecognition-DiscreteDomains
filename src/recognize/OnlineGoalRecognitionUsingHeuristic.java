@@ -16,6 +16,12 @@ import javaff.planning.STRIPSState;
 import javaff.search.UnreachableGoalException;
 import bean.GoalRecognitionResult;
 
+/**
+ * Heuristic Approach.
+ * For discrete domains, we use an inadmissible and domain-independent heuristic called Fast-Forward (FF).
+ * @author ramonfragapereira
+ *
+ */
 public class OnlineGoalRecognitionUsingHeuristic extends OnlineGoalRecognition {
 
 	public OnlineGoalRecognitionUsingHeuristic(String fileName) {
@@ -39,12 +45,14 @@ public class OnlineGoalRecognitionUsingHeuristic extends OnlineGoalRecognition {
 			Plan idealPlan = doPlanJavaFF(initialState, goal);
 			goalsIdealPlans.put(goal, idealPlan);
 		}
+		Set<GroundFact> recognizedGoals = new HashSet<>();
 		for(Action o: this.observations){
 			System.out.println("$> Observation (" + (int) observationCounter + ") :" + o);
 			observationsBuffer.add(o);
 			currentState = (STRIPSState) currentState.apply(o);
 			float sumOfScores = 0f;
-			if(recompute(currentState, topRankedGoal, candidateGoals)){
+			boolean recompute = recompute(currentState, topRankedGoal, candidateGoals);
+			if(recompute){
 				goalsToScores = new HashMap<>();
 				for(GroundFact goal: this.candidateGoals){
 					System.out.println("\n\t # Goal:" + goal);
@@ -65,27 +73,26 @@ public class OnlineGoalRecognitionUsingHeuristic extends OnlineGoalRecognition {
 					System.out.println("\t @@@@ Score: " + score);
 					sumOfScores += score;
 					goalsToScores.put(goal, score);
-				}				
+				}
+				float normalizingFactor = (1/sumOfScores);
+				GroundFact mostLikelyGoal = (topRankedGoal == null ? this.candidateGoals.get(0) : topRankedGoal);
+				float highestProbability = (normalizingFactor*goalsToScores.get(mostLikelyGoal));
+				Map<GroundFact, Float> goalsProbabilities = new HashMap<>();
+				for(GroundFact goal: this.candidateGoals){
+					float probabilityOfG = (normalizingFactor*goalsToScores.get(goal));
+					System.out.println("\t - Probability of " + goal + ": " + probabilityOfG);
+					goalsProbabilities.put(goal, probabilityOfG);
+					if(probabilityOfG > highestProbability){
+						mostLikelyGoal = goal;
+						highestProbability = probabilityOfG;
+					}
+				}
+				recognizedGoals = new HashSet<>();
+				for(GroundFact goal: goalsProbabilities.keySet())
+					if(goalsProbabilities.get(goal) == highestProbability)
+						recognizedGoals.add(goal);
 			}
 			observationCounter++;
-			float normalizingFactor = (1/sumOfScores);
-			GroundFact mostLikelyGoal = (topRankedGoal == null ? this.candidateGoals.get(0) : topRankedGoal);
-			float highestProbability = (normalizingFactor*goalsToScores.get(mostLikelyGoal));
-			Map<GroundFact, Float> goalsProbabilities = new HashMap<>();
-			for(GroundFact goal: this.candidateGoals){
-				float probabilityOfG = (normalizingFactor*goalsToScores.get(goal));
-				System.out.println("\t - Probability of " + goal + ": " + probabilityOfG);
-				goalsProbabilities.put(goal, probabilityOfG);
-				if(probabilityOfG > highestProbability){
-					mostLikelyGoal = goal;
-					highestProbability = probabilityOfG;
-				}
-			}
-			Set<GroundFact> recognizedGoals = new HashSet<>();
-			for(GroundFact goal: goalsProbabilities.keySet())
-				if(goalsProbabilities.get(goal) == highestProbability)
-					recognizedGoals.add(goal);
-
 			if(recognizedGoals.contains(this.realGoal)){
 				topFirstFrequency++;
 				topRankedGoal = this.realGoal;

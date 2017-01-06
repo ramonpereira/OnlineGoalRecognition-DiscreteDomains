@@ -16,6 +16,7 @@ import javaff.data.Fact;
 import javaff.data.GroundFact;
 import javaff.data.GroundProblem;
 import javaff.data.Plan;
+import javaff.planning.PlanningGraph;
 import javaff.planning.STRIPSState;
 import javaff.search.UnreachableGoalException;
 import parser.PDDLParser;
@@ -76,6 +77,13 @@ public abstract class OnlineGoalRecognition {
 		}
 	}
 	
+	/**
+	 * Fast Forward - Suboptimal Planner
+	 * @param initialState
+	 * @param goalState
+	 * @return
+	 * @throws UnreachableGoalException
+	 */
 	Plan doPlanJavaFF(Set<Fact> initialState, GroundFact goalState) throws UnreachableGoalException{
 		GroundProblem gp = (GroundProblem) this.groundProblem.clone();
 		String domainPath = this.groundProblem.getDomainPath();
@@ -84,16 +92,35 @@ public abstract class OnlineGoalRecognition {
 		JavaFF ff = new JavaFF(domainPath);
 		return ff.plan(gp, false);
 	}
+
+	/**
+	 * Graphplan - Optimal Planner
+	 * @param initialState
+	 * @param goalState
+	 * @return Plan
+	 * @throws UnreachableGoalException
+	 */
+	Plan doPlanGraphPlan(Set<Fact> initialState, GroundFact goalState) throws UnreachableGoalException{
+		GroundProblem gp = (GroundProblem) this.groundProblem.clone();
+		gp.setState(new STRIPSState(gp.getActions(), initialState, goalState));
+		gp.getSTRIPSInitialState().setGoal(goalState);
+		PlanningGraph graphPlan = new PlanningGraph(gp);
+		return graphPlan.getPlan(gp.getSTRIPSInitialState());
+	}
 	
 	void computeRecognitionResults(){
 	}
-	
+
+	/**
+	 * We round down to 1 because we allow the use of a 
+	 * sub-optimal planner (JavaFF, obs: JavaFF is faster than GraphPlan).
+	 * @param mG
+	 * @param iG
+	 * @return float
+	 */
 	public float match(float mG, float iG){
-		return (iG/mG);
-	}
-	
-	public Plan doPlan(Set<Fact> state, Set<Fact> goalState){
-		return null;
+		float mathing = (iG/mG);
+		return (mathing > 1 ? 1 : mathing);
 	}
 	
 	public float getNormalizingFactor(List<Float> goalsScore){

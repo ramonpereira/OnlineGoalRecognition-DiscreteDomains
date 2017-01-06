@@ -11,7 +11,7 @@ public class OnlineGoalRecognitionUsingFactPartitionsForPruning extends OnlineGo
 
 	/*
 	 * TODO: Talk to Mor about using Fact Partitions for pruning candidate goals.
-	 * Fact Partition we intend to use:
+	 * Fact partitions we intend to use:
 	 * 	- Strictly Activating: unless defined in the initial state, this fact can never be added;
 	 *  - Unstable Activating: once deleted, this fact cannot be re-achieved; and
 	 *  - Strictly Terminal: once added, cannot be deleted.

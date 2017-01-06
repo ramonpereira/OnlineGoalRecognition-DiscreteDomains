@@ -13,6 +13,11 @@ import javaff.planning.STRIPSState;
 import javaff.search.UnreachableGoalException;
 import bean.GoalRecognitionResult;
 
+/**
+ * Baseline Approach (no-recomputation of ideal plans).
+ * @author ramonfragapereira
+ *
+ */
 public class OnlineGoalRecognitionMirroringBaseline extends OnlineGoalRecognition {
 
 	public OnlineGoalRecognitionMirroringBaseline(String fileName){

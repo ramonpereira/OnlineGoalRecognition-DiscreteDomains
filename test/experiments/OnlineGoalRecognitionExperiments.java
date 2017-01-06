@@ -1,4 +1,4 @@
-package experiment;
+package experiments;
 
 import java.io.IOException;
 
@@ -6,13 +6,10 @@ import javaff.search.UnreachableGoalException;
 
 import org.junit.Test;
 
-import experiments.GoalRecognitionApproach;
-import experiments.OnlineGoalRecognitionBenchmark;
-
-public class OnlineGoalRecognitionExperiment {
+public class OnlineGoalRecognitionExperiments {
 
 	@Test
-	public void runExperimentsBaseLineApproach(){
+	public void runAllExperimentsBaseLineApproach(){
 		try {
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.BASELINE, "experiments/campus/");
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.BASELINE, "experiments/easy-ipc-grid/");
@@ -25,7 +22,7 @@ public class OnlineGoalRecognitionExperiment {
 	}
 	
 	@Test
-	public void runExperimentsNaiveApproach(){
+	public void runAllExperimentsNaiveApproach(){
 		try {
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.NAIVE, "experiments/campus/");
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.NAIVE, "experiments/easy-ipc-grid/");
@@ -38,7 +35,7 @@ public class OnlineGoalRecognitionExperiment {
 	}
 	
 	@Test
-	public void runExperimentsNoRecomputationApproach(){
+	public void runAllExperimentsNoRecomputationApproach(){
 		try {
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.NO_RECOMPUTATION, "experiments/campus/");
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.NO_RECOMPUTATION, "experiments/easy-ipc-grid/");
@@ -51,7 +48,7 @@ public class OnlineGoalRecognitionExperiment {
 	}
 	
 	@Test
-	public void runExperimentsHeuristicApproach(){
+	public void runAllExperimentsHeuristicApproach(){
 		try {
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.HEURISTIC, "experiments/campus/");
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.HEURISTIC, "experiments/easy-ipc-grid/");
