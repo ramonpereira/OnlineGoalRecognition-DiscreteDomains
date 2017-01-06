@@ -51,8 +51,7 @@ public class OnlineGoalRecognitionUsingHeuristic extends OnlineGoalRecognition {
 			observationsBuffer.add(o);
 			currentState = (STRIPSState) currentState.apply(o);
 			float sumOfScores = 0f;
-			boolean recompute = recompute(currentState, topRankedGoal, candidateGoals);
-			if(recompute){
+			if(recompute(currentState, topRankedGoal, candidateGoals)){
 				goalsToScores = new HashMap<>();
 				for(GroundFact goal: this.candidateGoals){
 					System.out.println("\n\t # Goal:" + goal);
@@ -91,7 +90,7 @@ public class OnlineGoalRecognitionUsingHeuristic extends OnlineGoalRecognition {
 				for(GroundFact goal: goalsProbabilities.keySet())
 					if(goalsProbabilities.get(goal) == highestProbability)
 						recognizedGoals.add(goal);
-			}
+			} else System.out.println(" No recomputation of the probabilities is needed, the goal rankings remain the same.");
 			observationCounter++;
 			if(recognizedGoals.contains(this.realGoal)){
 				topFirstFrequency++;
