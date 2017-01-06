@@ -3,6 +3,11 @@ import javaff.search.UnreachableGoalException;
 
 import org.junit.Test;
 
+import recognizer.NaiveOnlineGoalRecognition;
+import recognizer.OnlineGoalRecognitionMirroringBaseline;
+import recognizer.OnlineGoalRecognitionMirroringNoRecomputation;
+import recognizer.OnlineGoalRecognitionUsingHeuristic;
+
 public class OnlineGoalRecognitionTest {
 
 	public static String GOALRECOGNITION_PROBLEM = "experiments/easy-ipc-grid/easy-ipc-grid_p10-10-10_hyp-7_full.tar.bz2";

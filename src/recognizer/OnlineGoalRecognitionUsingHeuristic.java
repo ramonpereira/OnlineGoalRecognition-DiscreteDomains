@@ -1,4 +1,4 @@
-package recognize;
+package recognizer;
 import heuristic.FFHeuristic;
 import heuristic.Heuristic;
 
@@ -111,6 +111,11 @@ public class OnlineGoalRecognitionUsingHeuristic extends OnlineGoalRecognition {
 		if(topRankedGoal == null)
 			return true;
 		
+		/* Here, we can use any domain-independent heuristic. */
+		/**
+		 * TODO: Test recompute method using other planning heuristics, such as:
+		 * Adjusted Sum family, Combo, Set Level, Sum Mutex, and others.
+		 */
 		Heuristic heuristic = new FFHeuristic(groundProblem, currentState.getFacts());
 		int estimatedDistanceTopRankedGoal = heuristic.getEstimate(topRankedGoal);
 		int minimumEstimatedDistance = Integer.MAX_VALUE;

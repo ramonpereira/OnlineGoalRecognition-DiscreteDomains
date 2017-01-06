@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javaff.search.UnreachableGoalException;
-import recognize.NaiveOnlineGoalRecognition;
-import recognize.OnlineGoalRecognition;
-import recognize.OnlineGoalRecognitionMirroringBaseline;
-import recognize.OnlineGoalRecognitionMirroringNoRecomputation;
-import recognize.OnlineGoalRecognitionUsingHeuristic;
+import recognizer.NaiveOnlineGoalRecognition;
+import recognizer.OnlineGoalRecognition;
+import recognizer.OnlineGoalRecognitionMirroringBaseline;
+import recognizer.OnlineGoalRecognitionMirroringNoRecomputation;
+import recognizer.OnlineGoalRecognitionUsingHeuristic;
 import bean.GoalRecognitionResult;
 
 public class OnlineGoalRecognitionBenchmark {

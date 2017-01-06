@@ -1,4 +1,4 @@
-package recognize;
+package recognizer;
 
 import javaff.search.UnreachableGoalException;
 import bean.GoalRecognitionResult;
