@@ -7,7 +7,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javaff.JavaFF;
@@ -19,8 +22,11 @@ import javaff.data.Plan;
 import javaff.planning.PlanningGraph;
 import javaff.planning.STRIPSState;
 import javaff.search.UnreachableGoalException;
+import landmark.LandmarkExtractor;
+import landmark.LandmarkOrdering;
 import parser.PDDLParser;
 import bean.GoalRecognitionResult;
+import extracting.PartialLandmarkGenerator;
 
 public abstract class OnlineGoalRecognition {
 
@@ -31,8 +37,12 @@ public abstract class OnlineGoalRecognition {
 	protected List<Action> observations;
 	protected String recognitionFileName;
 	protected STRIPSState initialSTRIPSState;
+	protected STRIPSState initialStateSTRIPS;
+	protected Map<GroundFact, LandmarkExtractor> goalsToLandmarks;
+	protected Map<GroundFact, Set<Set<Fact>>> goalsToObservedLandmarks;
+	protected Map<GroundFact, Map<Fact, Integer>> goalsToAchievedLandmarksCounter;
 	
-	public abstract GoalRecognitionResult recognizeOnline() throws UnreachableGoalException;
+	public abstract GoalRecognitionResult recognizeOnline() throws UnreachableGoalException, IOException, InterruptedException;
 	
 	public OnlineGoalRecognition(String fileName){
 		try{
@@ -70,8 +80,13 @@ public abstract class OnlineGoalRecognition {
 			this.observations = PDDLParser.getObservations(groundProblem, observationsFilePath);
 			this.candidateGoals = PDDLParser.getGoals(groundProblem, goalsFilePath);
 			this.realGoal = PDDLParser.getGoals(groundProblem, realGoalFilePath).get(0);
-			this.initialState = groundProblem.getSTRIPSInitialState().getFacts();
+			this.initialStateSTRIPS = groundProblem.getSTRIPSInitialState();
 			this.initialSTRIPSState = groundProblem.getSTRIPSInitialState();
+			this.initialState = groundProblem.getSTRIPSInitialState().getFacts();
+			
+			this.goalsToAchievedLandmarksCounter = new HashMap<>();
+			this.goalsToLandmarks = new HashMap<>();
+			this.goalsToObservedLandmarks = new HashMap<>();
 		} catch (IOException | InterruptedException e){
 			e.printStackTrace();
 		}
@@ -108,9 +123,66 @@ public abstract class OnlineGoalRecognition {
 		return graphPlan.getPlan(gp.getSTRIPSInitialState());
 	}
 	
-	void computeRecognitionResults(){
+	void extractLandmarks(){
+		for(GroundFact goal: this.candidateGoals){
+			PartialLandmarkGenerator landmarkGenerator = new PartialLandmarkGenerator(this.initialStateSTRIPS, goal.getFacts(), groundProblem.getActions());
+			landmarkGenerator.extractLandmarks();
+			this.goalsToLandmarks.put(goal, landmarkGenerator);
+			//this.computeAchievedLandmarks(goal, null, initialStateSTRIPS);
+			//this.countAchievedLandmarksForSubgoals(goal);
+
+		}
+	}
+	
+	/**
+	 * Computing achieved landmarks for a goal in an observed action.
+	 * @param GroundFact goal
+	 * @param Action o
+	 */
+	void computeAchievedLandmarks(GroundFact goal, Action o, STRIPSState currentState){
+		List<LandmarkOrdering> landmarksOrdering = this.goalsToLandmarks.get(goal).getLandmarksOrdering();
+		Set<Set<Fact>> observedLandmarks = this.goalsToObservedLandmarks.get(goal);
+		if(observedLandmarks == null){
+			observedLandmarks = new HashSet<>();
+			this.goalsToObservedLandmarks.put(goal, observedLandmarks);
+		}
+		Set<Fact> observedFacts = new HashSet<>();
+		if(o != null){
+			observedFacts.addAll(o.getAddPropositions());
+			observedFacts.addAll(o.getPreconditions());
+		}
+		observedFacts.addAll(currentState.getFacts());
+		
+		for(LandmarkOrdering landmarkOrdering: landmarksOrdering)
+			for(Set<Fact> factsOrdering: landmarkOrdering.getOrdering())
+				if(observedFacts.containsAll(factsOrdering) && !observedLandmarks.contains(factsOrdering))
+					observedLandmarks.add(factsOrdering);
+
+		this.goalsToObservedLandmarks.replace(goal, observedLandmarks);
 	}
 
+	/**
+	 * Counting achieved landmarks for every subgoals.
+	 * @param GroundFact goal
+	 */
+	void countAchievedLandmarksForSubgoals(GroundFact goal){
+		Map<Fact, Integer> subgoalsAchievedLandmarks = new HashMap<>();
+		List<LandmarkOrdering> landmarksOrdering = this.goalsToLandmarks.get(goal).getLandmarksOrdering();
+		Set<Set<Fact>> observedLandmarks = this.goalsToObservedLandmarks.get(goal);
+		for(LandmarkOrdering landmarkOrdering: landmarksOrdering){
+			int subgoalCounter = 0;
+			for(Set<Fact> obsLandmark: observedLandmarks)
+				if(landmarkOrdering.getOrdering().contains(obsLandmark))
+					subgoalCounter++;
+			
+			subgoalsAchievedLandmarks.put(landmarkOrdering.getSubGoal(), subgoalCounter);
+		}
+		goalsToAchievedLandmarksCounter.put(goal, subgoalsAchievedLandmarks);
+	}
+	
+	void computeRecognitionResults(){
+	}
+	
 	/**
 	 * We round down to 1 because we allow the use of a 
 	 * sub-optimal planner (JavaFF, obs: JavaFF is faster than GraphPlan).

@@ -13,11 +13,17 @@ import recognizer.OnlineGoalRecognition;
 import recognizer.OnlineGoalRecognitionMirroringBaseline;
 import recognizer.OnlineGoalRecognitionMirroringNoRecomputation;
 import recognizer.OnlineGoalRecognitionUsingHeuristic;
+import recognizer.OnlineGoalRecognitionUsingLandmarksGoalCompletion;
+import recognizer.OnlineGoalRecognitionUsingLandmarksUniquenessHeuristic;
 import bean.GoalRecognitionResult;
 
 public class OnlineGoalRecognitionBenchmark {
 
-	public static void runExperiments(GoalRecognitionApproach approach, String directoryPath) throws UnreachableGoalException, IOException{
+	public static void runExperiments(GoalRecognitionApproach approach, String directoryPath) throws UnreachableGoalException, IOException, InterruptedException{
+		runExperiments(approach, directoryPath, null);
+	}
+	
+	public static void runExperiments(GoalRecognitionApproach approach, String directoryPath, Float threshold) throws UnreachableGoalException, IOException, InterruptedException{
 		File folder = new File(directoryPath);
 		List<GoalRecognitionResult> results = new ArrayList<>();
 		long initialTime = System.currentTimeMillis();
@@ -26,7 +32,7 @@ public class OnlineGoalRecognitionBenchmark {
 	        	if(fileEntry.getName().equalsIgnoreCase(".gitignore") || fileEntry.getName().equalsIgnoreCase(".DS_Store")) 
 	        		continue;
 	        	
-	        	OnlineGoalRecognition onlineRecognizer = getInstantiatedApproach(approach, fileEntry.toString());
+	        	OnlineGoalRecognition onlineRecognizer = getInstantiatedApproach(approach, fileEntry.toString(), (threshold == null ? 0 : threshold));
 	        	results.add(onlineRecognizer.recognizeOnline());
 	        }
 	    }
@@ -44,10 +50,10 @@ public class OnlineGoalRecognitionBenchmark {
 		outputFileContent += "\n# Average Convergence Percent (%): " + (totalConvergencePercentage/totalProblems);
 		outputFileContent += "\n# Average Run-Time (sec): " + (totalTime / totalProblems);
 		outputFileContent += "\n\n# Total Problems: " + totalProblems;
-		writeExperimentFile(outputFileContent, folder.getAbsolutePath().toString() + "_" + approach);
+		writeExperimentFile(outputFileContent, folder.getAbsolutePath().toString() + "_" + approach + (threshold != null ? "_" + threshold : ""));
 	}
 	
-	private static OnlineGoalRecognition getInstantiatedApproach(GoalRecognitionApproach approach, String goalRecognitionProblem){
+	private static OnlineGoalRecognition getInstantiatedApproach(GoalRecognitionApproach approach, String goalRecognitionProblem, float threshold){
 		OnlineGoalRecognition instantiatedApproach = null;
 		if(approach == GoalRecognitionApproach.BASELINE){
 	        instantiatedApproach = new OnlineGoalRecognitionMirroringBaseline(goalRecognitionProblem);
@@ -55,8 +61,13 @@ public class OnlineGoalRecognitionBenchmark {
 			instantiatedApproach = new NaiveOnlineGoalRecognition(goalRecognitionProblem);
 		} else if(approach == GoalRecognitionApproach.NO_RECOMPUTATION){
 			instantiatedApproach = new OnlineGoalRecognitionMirroringNoRecomputation(goalRecognitionProblem);
-		} else if(approach == GoalRecognitionApproach.HEURISTIC)
+		} else if(approach == GoalRecognitionApproach.HEURISTIC){
 			instantiatedApproach = new OnlineGoalRecognitionUsingHeuristic(goalRecognitionProblem);
+		} else if(approach == GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC){
+			instantiatedApproach = new OnlineGoalRecognitionUsingLandmarksGoalCompletion(goalRecognitionProblem, threshold);
+		} else if(approach == GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC){
+			instantiatedApproach = new OnlineGoalRecognitionUsingLandmarksUniquenessHeuristic(goalRecognitionProblem, threshold);
+		}
 		
 		return instantiatedApproach;
 	}
