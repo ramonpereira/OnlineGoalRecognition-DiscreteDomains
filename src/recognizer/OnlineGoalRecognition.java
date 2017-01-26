@@ -128,9 +128,8 @@ public abstract class OnlineGoalRecognition {
 			PartialLandmarkGenerator landmarkGenerator = new PartialLandmarkGenerator(this.initialStateSTRIPS, goal.getFacts(), groundProblem.getActions());
 			landmarkGenerator.extractLandmarks();
 			this.goalsToLandmarks.put(goal, landmarkGenerator);
-			//this.computeAchievedLandmarks(goal, null, initialStateSTRIPS);
-			//this.countAchievedLandmarksForSubgoals(goal);
-
+			this.computeAchievedLandmarks(goal, null, initialStateSTRIPS);
+			this.countAchievedLandmarksForSubgoals(goal);
 		}
 	}
 	

@@ -10,7 +10,6 @@ import java.util.Set;
 import javaff.data.Action;
 import javaff.data.Fact;
 import javaff.data.GroundFact;
-import javaff.data.Plan;
 import javaff.planning.STRIPSState;
 import javaff.search.UnreachableGoalException;
 import landmark.LandmarkOrdering;
