@@ -15,6 +15,7 @@ import recognizer.OnlineGoalRecognitionMirroringNoRecomputation;
 import recognizer.OnlineGoalRecognitionUsingHeuristic;
 import recognizer.OnlineGoalRecognitionUsingLandmarksGoalCompletion;
 import recognizer.OnlineGoalRecognitionUsingLandmarksUniquenessHeuristic;
+import recognizer.OnlineGoalRecognitionUsingLandmarksWithBaseline;
 import bean.GoalRecognitionResult;
 
 public class OnlineGoalRecognitionBenchmark {
@@ -63,6 +64,8 @@ public class OnlineGoalRecognitionBenchmark {
 			instantiatedApproach = new OnlineGoalRecognitionMirroringNoRecomputation(goalRecognitionProblem);
 		} else if(approach == GoalRecognitionApproach.HEURISTIC){
 			instantiatedApproach = new OnlineGoalRecognitionUsingHeuristic(goalRecognitionProblem);
+		} else if(approach == GoalRecognitionApproach.LANDMARKS_BASELINE){
+				instantiatedApproach = new OnlineGoalRecognitionUsingLandmarksWithBaseline(goalRecognitionProblem);			
 		} else if(approach == GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC){
 			instantiatedApproach = new OnlineGoalRecognitionUsingLandmarksGoalCompletion(goalRecognitionProblem, threshold);
 		} else if(approach == GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC){

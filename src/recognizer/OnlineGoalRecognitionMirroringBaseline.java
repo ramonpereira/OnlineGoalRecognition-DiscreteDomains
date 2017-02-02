@@ -82,7 +82,7 @@ public class OnlineGoalRecognitionMirroringBaseline extends OnlineGoalRecognitio
 				if(goalsProbabilities.get(goal) == highestProbability)
 					recognizedGoals.add(goal);
 
-			if(recognizedGoals.contains(this.realGoal)){
+			if(recognizedGoals.size() == 1 && recognizedGoals.contains(this.realGoal)){
 				topFirstFrequency++;
 				convergenceToTopRankedGoal++;
 			} else convergenceToTopRankedGoal = 0;

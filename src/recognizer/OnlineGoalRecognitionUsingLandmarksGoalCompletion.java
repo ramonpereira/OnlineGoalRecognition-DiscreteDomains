@@ -60,7 +60,7 @@ public class OnlineGoalRecognitionUsingLandmarksGoalCompletion extends OnlineGoa
 				if(goalsToEstimateCompletion.get(goal) >= (maxGoalCompletion - this.threshold))
 					recognizedGoals.add(goal);
 			
-			if(recognizedGoals.contains(this.realGoal)){
+			if(recognizedGoals.size() == 1 && recognizedGoals.contains(this.realGoal)){
 				topFirstFrequency++;
 				convergenceToTopRankedGoal++;
 			} else convergenceToTopRankedGoal = 0;

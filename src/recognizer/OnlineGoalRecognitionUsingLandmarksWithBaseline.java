@@ -1,4 +1,6 @@
 package recognizer;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,27 +15,22 @@ import javaff.planning.STRIPSState;
 import javaff.search.UnreachableGoalException;
 import bean.GoalRecognitionResult;
 
-/**
- * No-recomputation Approach (no-recomputation of ideal plans and mG).
- * @author ramonfragapereira
- *
- */
-public class OnlineGoalRecognitionMirroringNoRecomputation extends OnlineGoalRecognition {
+public class OnlineGoalRecognitionUsingLandmarksWithBaseline extends OnlineGoalRecognition {
 
-	public OnlineGoalRecognitionMirroringNoRecomputation(String fileName) {
+	public OnlineGoalRecognitionUsingLandmarksWithBaseline(String fileName) { 
 		super(fileName);
 	}
-	
+
 	@Override
-	public GoalRecognitionResult recognizeOnline() throws UnreachableGoalException{
+	public GoalRecognitionResult recognizeOnline() throws UnreachableGoalException, IOException, InterruptedException {
 		Map<GroundFact, List<Action>> mObservationsGoals = new HashMap<>();
 		Map<GroundFact, Plan> goalsIdealPlans= new HashMap<>();
-		Map<GroundFact, Plan> goalsMPlusPlans= new HashMap<>();
 		STRIPSState currentState = this.initialSTRIPSState;
 		System.out.println("#> Real Goal: " + this.realGoal);
 		int observationCounter = 0;
 		float topFirstFrequency = 0;
 		float convergenceToTopRankedGoal = 0;
+		this.extractLandmarks();
 		for(GroundFact goal: this.candidateGoals){
 			System.out.println("\t # Goal:" + goal);
 			Plan idealPlan = doPlanJavaFF(initialState, goal);
@@ -41,43 +38,42 @@ public class OnlineGoalRecognitionMirroringNoRecomputation extends OnlineGoalRec
 		}
 		for(Action o: this.observations){
 			System.out.println("$> Observation (" + (int) observationCounter + ") :" + o);
+			observationCounter++;
 			currentState = (STRIPSState) currentState.apply(o);
 			Map<GroundFact, Float> goalsToScores = new HashMap<>();
+			Set<GroundFact> filteredCandidateGoals = new HashSet<>();
 			float sumOfScores = 0f;
-			for(GroundFact goal: this.candidateGoals){
+			for(GroundFact goal: this.candidateGoals)
+				this.computeAchievedLandmarks(goal, o, currentState);
+			
+			filteredCandidateGoals = this.filterCandidateGoalsUsingLandmarks();
+			System.out.println("\n\t # Filtered Goals: " + filteredCandidateGoals.size());
+			
+			for(GroundFact goal: filteredCandidateGoals){
 				System.out.println("\n\t # Goal:" + goal);
 				Plan idealPlanOfG = goalsIdealPlans.get(goal);
 				System.out.println("\t # Ideal Plan of G: " + idealPlanOfG.getPlanLength());
-				float mG = 0;
-				if(observationCounter == 0){
-					Plan mPlus = doPlanJavaFF(currentState.getFacts(), goal);
-					goalsMPlusPlans.put(goal, mPlus);
-					mG = mPlus.getPlanLength()+1;
-				} else {
-					List<Action> mMinus = mObservationsGoals.get(goal);
-					if(mMinus == null){
-						List<Action> mMinusNew = new ArrayList<Action>();
-						mMinus = mMinusNew;
-						mMinusNew.add(o);
-						mObservationsGoals.put(goal, mMinusNew);
-					} else mMinus.add(o);
-					Plan mGPlus = goalsMPlusPlans.get(goal);
-					if(containsActions(mGPlus, mMinus))
-						mG = mGPlus.getPlanLength()+1;
-				}
-				float score = 0;
-				if(mG > 0)
-					score = this.match(mG, idealPlanOfG.getPlanLength());
+				List<Action> mMinus = mObservationsGoals.get(goal);
+				if(mMinus == null){
+					List<Action> mMinusNew = new ArrayList<Action>();
+					mMinus = mMinusNew;
+					mMinusNew.add(o);
+					mObservationsGoals.put(goal, mMinusNew);
+				} else mMinus.add(o);
+				Plan mPlus = doPlanJavaFF(currentState.getFacts(), goal);
+				System.out.println("\t # mMinus: " + mMinus.size());
+				System.out.println("\t # mPlus: " + mPlus.getPlanLength());
+				float mG = mMinus.size() + mPlus.getPlanLength();
+				float score = this.match(mG, idealPlanOfG.getPlanLength());
 				System.out.println("\t @@@@ Score: " + score);
 				sumOfScores += score;
 				goalsToScores.put(goal, score);
 			}
-			observationCounter++;
 			float normalizingFactor = (1/sumOfScores);
-			GroundFact mostLikelyGoal = this.candidateGoals.get(0);
+			GroundFact mostLikelyGoal = filteredCandidateGoals.iterator().next();
 			float highestProbability = (normalizingFactor*goalsToScores.get(mostLikelyGoal));
 			Map<GroundFact, Float> goalsProbabilities = new HashMap<>();
-			for(GroundFact goal: this.candidateGoals){
+			for(GroundFact goal: filteredCandidateGoals){
 				float probabilityOfG = (normalizingFactor*goalsToScores.get(goal));
 				System.out.println("\t - Probability of " + goal + ": " + probabilityOfG);
 				goalsProbabilities.put(goal, probabilityOfG);
@@ -90,7 +86,7 @@ public class OnlineGoalRecognitionMirroringNoRecomputation extends OnlineGoalRec
 			for(GroundFact goal: goalsProbabilities.keySet())
 				if(goalsProbabilities.get(goal) == highestProbability)
 					recognizedGoals.add(goal);
-			
+
 			if(recognizedGoals.size() == 1 && recognizedGoals.contains(this.realGoal)){
 				topFirstFrequency++;
 				convergenceToTopRankedGoal++;
@@ -104,11 +100,24 @@ public class OnlineGoalRecognitionMirroringNoRecomputation extends OnlineGoalRec
 		System.out.println("$$$$####> Total Observed Actions: " + observationCounter);
 		return new GoalRecognitionResult(topFirstRankedPercent, convergencePercent);
 	}
-	
-	private boolean containsActions(Plan mGPlus, List<Action> observations){
-		for(int i=0;i<observations.size();i++)
-			if(!observations.get(i).toString().equalsIgnoreCase(mGPlus.getActions().get(i).toString()))
-				return false;
-		return true;
+
+	private Set<GroundFact> filterCandidateGoalsUsingLandmarks() {
+		float highestValue = 0;
+		Map<GroundFact, Float> goalsToPercentageOfAchievedLandmarks = new HashMap<>();
+		for(GroundFact goal: this.candidateGoals){
+			float numberOfLandmarksOfGoal = this.goalsToLandmarks.get(goal).getAmountOfLandmarks();
+			float numberOfAchivedLandmarksOfGoal = this.goalsToObservedLandmarks.get(goal).size();
+			float percentageAchievedLandmarksOfGoal = (numberOfAchivedLandmarksOfGoal/numberOfLandmarksOfGoal);
+			if(percentageAchievedLandmarksOfGoal > highestValue)
+				highestValue = percentageAchievedLandmarksOfGoal;
+			
+			goalsToPercentageOfAchievedLandmarks.put(goal, percentageAchievedLandmarksOfGoal);
+		}
+		Set<GroundFact> filteredGoals = new HashSet<>();
+		for(GroundFact goal: this.candidateGoals)
+			if(highestValue == goalsToPercentageOfAchievedLandmarks.get(goal))
+				filteredGoals.add(goal);
+		
+		return filteredGoals;
 	}
 }

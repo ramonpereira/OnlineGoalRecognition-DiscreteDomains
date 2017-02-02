@@ -92,7 +92,7 @@ public class OnlineGoalRecognitionUsingHeuristic extends OnlineGoalRecognition {
 						recognizedGoals.add(goal);
 			} else System.out.println(" No recomputation of the probabilities is needed, the goal rankings remain the same.");
 			observationCounter++;
-			if(recognizedGoals.contains(this.realGoal)){
+			if(recognizedGoals.size() == 1 && recognizedGoals.contains(this.realGoal)){
 				topFirstFrequency++;
 				topRankedGoal = this.realGoal;
 				convergenceToTopRankedGoal++;
