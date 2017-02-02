@@ -77,28 +77,11 @@ public class OnlineGoalRecognitionExperiments {
 	public void runAllExperimentsLandmarksGoalCompletionApproach(){
 		try {
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC, "experiments/blocks-world/");
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC, "experiments/blocks-world/", 0.1f);
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC, "experiments/blocks-world/", 0.2f);
-			
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC, "experiments/campus/");
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC, "experiments/campus/", 0.1f);
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC, "experiments/campus/", 0.2f);
-
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC, "experiments/easy-ipc-grid/");
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC, "experiments/easy-ipc-grid/", 0.1f);
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC, "experiments/easy-ipc-grid/", 0.2f);
-
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC, "experiments/intrusion-detection/");
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC, "experiments/intrusion-detection/", 0.1f);
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC, "experiments/intrusion-detection/", 0.2f);
-
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC, "experiments/logistics/");
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC, "experiments/logistics/", 0.1f);
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC, "experiments/logistics/", 0.2f);
-		
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC, "experiments/kitchen/");
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC, "experiments/kitchen/", 0.1f);
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC, "experiments/kitchen/", 0.2f);
 		} catch (UnreachableGoalException | IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -108,28 +91,11 @@ public class OnlineGoalRecognitionExperiments {
 	public void runAllExperimentsLandmarksUniquenessHeuristicApproach(){
 		try {
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC, "experiments/blocks-world/");
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC, "experiments/blocks-world/", 0.1f);
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC, "experiments/blocks-world/", 0.2f);
-			
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC, "experiments/campus/");
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC, "experiments/campus/", 0.1f);
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC, "experiments/campus/", 0.2f);
-
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC, "experiments/easy-ipc-grid/");
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC, "experiments/easy-ipc-grid/", 0.1f);
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC, "experiments/easy-ipc-grid/", 0.2f);
-
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC, "experiments/intrusion-detection/");
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC, "experiments/intrusion-detection/", 0.1f);
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC, "experiments/intrusion-detection/", 0.2f);
-
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC, "experiments/logistics/");
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC, "experiments/logistics/", 0.1f);
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC, "experiments/logistics/", 0.2f);
-		
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC, "experiments/kitchen/");
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC, "experiments/kitchen/", 0.1f);
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC, "experiments/kitchen/", 0.2f);
 		} catch (UnreachableGoalException | IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
