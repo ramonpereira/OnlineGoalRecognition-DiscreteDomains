@@ -65,7 +65,7 @@ public class OnlineGoalRecognitionBenchmark {
 		} else if(approach == GoalRecognitionApproach.HEURISTIC){
 			instantiatedApproach = new OnlineGoalRecognitionUsingHeuristic(goalRecognitionProblem);
 		} else if(approach == GoalRecognitionApproach.LANDMARKS_BASELINE){
-				instantiatedApproach = new OnlineGoalRecognitionUsingLandmarksWithBaseline(goalRecognitionProblem);			
+				instantiatedApproach = new OnlineGoalRecognitionUsingLandmarksWithBaseline(goalRecognitionProblem, threshold);
 		} else if(approach == GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC){
 			instantiatedApproach = new OnlineGoalRecognitionUsingLandmarksGoalCompletion(goalRecognitionProblem, threshold);
 		} else if(approach == GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC){

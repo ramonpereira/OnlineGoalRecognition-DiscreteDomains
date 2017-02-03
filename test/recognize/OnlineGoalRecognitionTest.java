@@ -15,7 +15,8 @@ import recognizer.OnlineGoalRecognitionUsingLandmarksWithBaseline;
 
 public class OnlineGoalRecognitionTest {
 
-	public static String GOALRECOGNITION_PROBLEM = "experiments/blocks-world/block-words_p01_hyp-0_full.tar.bz2";
+	public static String GOALRECOGNITION_PROBLEM = 
+			"experiments/easy-ipc-grid/easy-ipc-grid_p5-10-10_hyp-7_full.tar.bz2";
 	
 	@Test
 	public void testNaiveOnlineGoalRecognition(){
@@ -81,7 +82,8 @@ public class OnlineGoalRecognitionTest {
 	
 	@Test
 	public void testOnlineGoalRecognitionUsingLandmarksWithBaseline(){
-		OnlineGoalRecognitionUsingLandmarksWithBaseline recognizer = new OnlineGoalRecognitionUsingLandmarksWithBaseline(GOALRECOGNITION_PROBLEM);
+		float threshold = 0;
+		OnlineGoalRecognitionUsingLandmarksWithBaseline recognizer = new OnlineGoalRecognitionUsingLandmarksWithBaseline(GOALRECOGNITION_PROBLEM, threshold);
 		try {
 			recognizer.recognizeOnline();
 		} catch (UnreachableGoalException | IOException | InterruptedException e) {

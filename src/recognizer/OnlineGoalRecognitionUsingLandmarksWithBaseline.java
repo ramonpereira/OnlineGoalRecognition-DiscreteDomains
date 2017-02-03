@@ -17,8 +17,11 @@ import bean.GoalRecognitionResult;
 
 public class OnlineGoalRecognitionUsingLandmarksWithBaseline extends OnlineGoalRecognition {
 
-	public OnlineGoalRecognitionUsingLandmarksWithBaseline(String fileName) { 
+	private float threshold;
+	
+	public OnlineGoalRecognitionUsingLandmarksWithBaseline(String fileName, float threshold) {
 		super(fileName);
+		this.threshold = threshold;
 	}
 
 	@Override
@@ -43,16 +46,8 @@ public class OnlineGoalRecognitionUsingLandmarksWithBaseline extends OnlineGoalR
 			Map<GroundFact, Float> goalsToScores = new HashMap<>();
 			Set<GroundFact> filteredCandidateGoals = new HashSet<>();
 			float sumOfScores = 0f;
-			for(GroundFact goal: this.candidateGoals)
+			for(GroundFact goal: this.candidateGoals){
 				this.computeAchievedLandmarks(goal, o, currentState);
-			
-			filteredCandidateGoals = this.filterCandidateGoalsUsingLandmarks();
-			System.out.println("\n\t # Filtered Goals: " + filteredCandidateGoals.size());
-			
-			for(GroundFact goal: filteredCandidateGoals){
-				System.out.println("\n\t # Goal:" + goal);
-				Plan idealPlanOfG = goalsIdealPlans.get(goal);
-				System.out.println("\t # Ideal Plan of G: " + idealPlanOfG.getPlanLength());
 				List<Action> mMinus = mObservationsGoals.get(goal);
 				if(mMinus == null){
 					List<Action> mMinusNew = new ArrayList<Action>();
@@ -60,7 +55,17 @@ public class OnlineGoalRecognitionUsingLandmarksWithBaseline extends OnlineGoalR
 					mMinusNew.add(o);
 					mObservationsGoals.put(goal, mMinusNew);
 				} else mMinus.add(o);
+			}
+			
+			filteredCandidateGoals = this.filterCandidateGoalsUsingLandmarks();
+			System.out.println("\n\t # Filtered Goals (out of " + this.candidateGoals.size() + "): " + filteredCandidateGoals.size());
+			
+			for(GroundFact goal: filteredCandidateGoals){
+				System.out.println("\n\t # Goal:" + goal);
+				Plan idealPlanOfG = goalsIdealPlans.get(goal);
+				System.out.println("\t # Ideal Plan of G: " + idealPlanOfG.getPlanLength());
 				Plan mPlus = doPlanJavaFF(currentState.getFacts(), goal);
+				List<Action> mMinus = mObservationsGoals.get(goal);
 				System.out.println("\t # mMinus: " + mMinus.size());
 				System.out.println("\t # mPlus: " + mPlus.getPlanLength());
 				float mG = mMinus.size() + mPlus.getPlanLength();
@@ -115,7 +120,8 @@ public class OnlineGoalRecognitionUsingLandmarksWithBaseline extends OnlineGoalR
 		}
 		Set<GroundFact> filteredGoals = new HashSet<>();
 		for(GroundFact goal: this.candidateGoals)
-			if(highestValue == goalsToPercentageOfAchievedLandmarks.get(goal))
+			//if(highestValue == goalsToPercentageOfAchievedLandmarks.get(goal))
+			if(goalsToPercentageOfAchievedLandmarks.get(goal) >= (highestValue - this.threshold))	
 				filteredGoals.add(goal);
 		
 		return filteredGoals;

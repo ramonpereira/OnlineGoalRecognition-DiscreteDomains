@@ -1,5 +1,5 @@
 # Average Ranked First Percent (%): 0.55308914
 # Average Convergence Percent (%): 0.55308914
-# Average Run-Time (sec): 3.2
+# Average Run-Time (sec): 1.9333333
 
 # Total Problems: 45.0
