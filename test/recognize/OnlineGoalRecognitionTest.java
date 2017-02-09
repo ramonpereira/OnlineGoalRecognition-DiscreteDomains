@@ -16,7 +16,7 @@ import recognizer.OnlineGoalRecognitionUsingLandmarksWithBaseline;
 public class OnlineGoalRecognitionTest {
 
 	public static String GOALRECOGNITION_PROBLEM = 
-			"experiments/easy-ipc-grid/easy-ipc-grid_p5-10-10_hyp-7_full.tar.bz2";
+			"experiments/blocks-world/block-words_p02_hyp-15_full.tar.bz2";
 	
 	@Test
 	public void testNaiveOnlineGoalRecognition(){

@@ -11,11 +11,12 @@ public class OnlineGoalRecognitionExperiments {
 	@Test
 	public void runAllExperimentsBaseLineApproach(){
 		try {
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.BASELINE, "experiments/campus/");
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.BASELINE, "experiments/easy-ipc-grid/");
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.BASELINE, "experiments/intrusion-detection/");
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.BASELINE, "experiments/logistics/");
-			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.BASELINE, "experiments/kitchen/");
+			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.BASELINE, "experiments/blocks-world/");
+//			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.BASELINE, "experiments/campus/");
+//			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.BASELINE, "experiments/easy-ipc-grid/");
+//			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.BASELINE, "experiments/intrusion-detection/");
+//			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.BASELINE, "experiments/logistics/");
+//			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.BASELINE, "experiments/kitchen/");
 		} catch (UnreachableGoalException | IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -24,25 +25,25 @@ public class OnlineGoalRecognitionExperiments {
 	@Test
 	public void runAllExperimentsLandmarksWithBaseLineApproach(){
 		try {
-//			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/campus/", 0f);
-//			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/campus/", 0.1f);
-//			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/campus/", 0.2f);
+			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/campus/", 0f);
+			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/campus/", 0.1f);
+			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/campus/", 0.2f);
 			
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/easy-ipc-grid/", 0f);
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/easy-ipc-grid/", 0.1f);
 			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/easy-ipc-grid/", 0.2f);
 			
-//			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/intrusion-detection/", 0f);
-//			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/intrusion-detection/", 0.1f);
-//			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/intrusion-detection/", 0.2f);
-//			
-//			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/logistics/", 0f);
-//			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/logistics/", 0.1f);
-//			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/logistics/", 0.2f);
-//			
-//			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/kitchen/", 0f);
-//			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/kitchen/", 0.1f);
-//			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/kitchen/", 0.2f);
+			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/intrusion-detection/", 0f);
+			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/intrusion-detection/", 0.1f);
+			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/intrusion-detection/", 0.2f);
+			
+			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/logistics/", 0f);
+			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/logistics/", 0.1f);
+			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/logistics/", 0.2f);
+			
+			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/kitchen/", 0f);
+			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/kitchen/", 0.1f);
+			OnlineGoalRecognitionBenchmark.runExperiments(GoalRecognitionApproach.LANDMARKS_BASELINE, "experiments/kitchen/", 0.2f);
 		} catch (UnreachableGoalException | IOException | InterruptedException e) {
 			e.printStackTrace();
 		}

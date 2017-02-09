@@ -44,6 +44,7 @@ public class OnlineGoalRecognitionUsingLandmarksWithBaseline extends OnlineGoalR
 			observationCounter++;
 			currentState = (STRIPSState) currentState.apply(o);
 			Map<GroundFact, Float> goalsToScores = new HashMap<>();
+			Map<GroundFact, Integer> goalsToMPlus = new HashMap<>();
 			Set<GroundFact> filteredCandidateGoals = new HashSet<>();
 			float sumOfScores = 0f;
 			for(GroundFact goal: this.candidateGoals){
@@ -56,10 +57,8 @@ public class OnlineGoalRecognitionUsingLandmarksWithBaseline extends OnlineGoalR
 					mObservationsGoals.put(goal, mMinusNew);
 				} else mMinus.add(o);
 			}
-			
 			filteredCandidateGoals = this.filterCandidateGoalsUsingLandmarks();
 			System.out.println("\n\t # Filtered Goals (out of " + this.candidateGoals.size() + "): " + filteredCandidateGoals.size());
-			
 			for(GroundFact goal: filteredCandidateGoals){
 				System.out.println("\n\t # Goal:" + goal);
 				Plan idealPlanOfG = goalsIdealPlans.get(goal);
@@ -73,6 +72,7 @@ public class OnlineGoalRecognitionUsingLandmarksWithBaseline extends OnlineGoalR
 				System.out.println("\t @@@@ Score: " + score);
 				sumOfScores += score;
 				goalsToScores.put(goal, score);
+				goalsToMPlus.put(goal, mPlus.getPlanLength());
 			}
 			float normalizingFactor = (1/sumOfScores);
 			GroundFact mostLikelyGoal = filteredCandidateGoals.iterator().next();
@@ -95,6 +95,19 @@ public class OnlineGoalRecognitionUsingLandmarksWithBaseline extends OnlineGoalR
 			if(recognizedGoals.size() == 1 && recognizedGoals.contains(this.realGoal)){
 				topFirstFrequency++;
 				convergenceToTopRankedGoal++;
+			} else if(recognizedGoals.size() > 1){
+				GroundFact recognizedGoal = recognizedGoals.iterator().next();
+				for(GroundFact goal: recognizedGoals){
+					if(goalsToMPlus.get(goal) < goalsToMPlus.get(recognizedGoal))
+						recognizedGoal = goal;
+				}
+				if(recognizedGoal.equals(this.realGoal)){
+					System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ HERE");
+					System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ HERE");
+					System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ HERE");
+					topFirstFrequency++;
+					convergenceToTopRankedGoal++;
+				}
 			} else convergenceToTopRankedGoal = 0;
 		}
 		float topFirstRankedPercent  = (topFirstFrequency/observationCounter);
