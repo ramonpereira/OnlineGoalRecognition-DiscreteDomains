@@ -197,4 +197,18 @@ public abstract class OnlineGoalRecognition {
 	public float getNormalizingFactor(List<Float> goalsScore){
 		return 0;
 	}
+	
+	public float getAverageOfFactLandmarks(){
+		if(goalsToLandmarks.keySet().size() == 0) 
+			return 0;
+		
+		int size = 0;
+		for(GroundFact goal: this.candidateGoals){
+			LandmarkExtractor landmarkGenerator = goalsToLandmarks.get(goal);
+			size += landmarkGenerator.getFactLandmarks().size();	
+		}
+		float avg = (size / this.candidateGoals.size());
+		System.out.println(avg);
+		return avg;
+	}
 }

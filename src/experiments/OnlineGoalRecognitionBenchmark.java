@@ -40,9 +40,17 @@ public class OnlineGoalRecognitionBenchmark {
 		String outputFileContent = "";
 		float totalTopFirstPercentage = 0;
 		float totalConvergencePercentage = 0;
+		float totalCandidateGoals = 0;
+		float totalObservations = 0;
+		float totalLandmarks = 0;
+		float totalNumberOfCallsPlanner = 0;
 		for(GoalRecognitionResult goalRecognitionResult: results){
 			totalTopFirstPercentage += goalRecognitionResult.getRankedFirstPercent();
 			totalConvergencePercentage += goalRecognitionResult.getConvergenceFirstPercent();
+			totalCandidateGoals += goalRecognitionResult.getNumberOfCandidateGoals();
+			totalObservations += goalRecognitionResult.getNumberOfObservations();
+			totalLandmarks += goalRecognitionResult.getNumberOfLandmarks();
+			totalNumberOfCallsPlanner += goalRecognitionResult.getNumberOfCallsPlanner();
 		}
 		long finalTime = System.currentTimeMillis();
 		float totalTime = ((finalTime - initialTime)/1000);
@@ -50,6 +58,10 @@ public class OnlineGoalRecognitionBenchmark {
 		outputFileContent += "# Average Ranked First Percent (%): " + (totalTopFirstPercentage/totalProblems);
 		outputFileContent += "\n# Average Convergence Percent (%): " + (totalConvergencePercentage/totalProblems);
 		outputFileContent += "\n# Average Run-Time (sec): " + (totalTime / totalProblems);
+		outputFileContent += "\n# Average Candidate Goals: " + (totalCandidateGoals / totalProblems);
+		outputFileContent += "\n# Average Number of Observed Actions: " + (totalObservations / totalProblems);
+		outputFileContent += "\n# Average Number of Landmarks: " + (totalLandmarks / totalProblems);
+		outputFileContent += "\n# Average Number of Calls to Planner: " + (totalNumberOfCallsPlanner / totalProblems);
 		outputFileContent += "\n\n# Total Problems: " + totalProblems;
 		writeExperimentFile(outputFileContent, folder.getAbsolutePath().toString() + "_" + approach + (threshold != null ? "_" + threshold : ""));
 	}

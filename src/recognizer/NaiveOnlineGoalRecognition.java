@@ -24,6 +24,7 @@ public class NaiveOnlineGoalRecognition extends OnlineGoalRecognition {
 		Map<GroundFact, List<Action>> mObservationsGoals = new HashMap<>();
 		STRIPSState currentState = this.initialSTRIPSState;
 		System.out.println("#> Real Goal: " + this.realGoal);
+		float numberOfCallsPlanner = 0;
 		float observationCounter = 0;
 		float topFirstFrequency = 0;
 		float convergenceToTopRankedGoal = 0;
@@ -36,6 +37,7 @@ public class NaiveOnlineGoalRecognition extends OnlineGoalRecognition {
 			for(GroundFact goal: this.candidateGoals){
 				System.out.println("\n\t # Goal:" + goal);
 				Plan idealPlan = doPlanJavaFF(initialState, goal);
+				numberOfCallsPlanner++;
 				System.out.println("\t # Ideal Plan of G: " + idealPlan.getPlanLength());
 				List<Action> mMinus = mObservationsGoals.get(goal);
 				if(mMinus == null){
@@ -45,6 +47,7 @@ public class NaiveOnlineGoalRecognition extends OnlineGoalRecognition {
 					mObservationsGoals.put(goal, mMinusNew);
 				} else mMinus.add(o);
 				Plan mPlus = doPlanJavaFF(currentState.getFacts(), goal);
+				numberOfCallsPlanner++;
 				System.out.println("\t # mMinus: " + mMinus.size());
 				System.out.println("\t # mPlus: " + mPlus.getPlanLength());
 				float mG = mMinus.size() + mPlus.getPlanLength();
@@ -81,7 +84,10 @@ public class NaiveOnlineGoalRecognition extends OnlineGoalRecognition {
 		System.out.println("\n$$$$####> Top First Ranked Percent (%): " + topFirstRankedPercent);
 		System.out.println("$$$$####> Convergence Percent (%): " + convergencePercent);
 		System.out.println("$$$$####> Top Ranked First times: " + topFirstFrequency);
+		System.out.println("$$$$####> Total Candidate Goals: " + this.candidateGoals.size());
 		System.out.println("$$$$####> Total Observed Actions: " + observationCounter);
-		return new GoalRecognitionResult(topFirstRankedPercent, convergencePercent);
+		System.out.println("$$$$####> Total Number of Landmarks: " + this.getAverageOfFactLandmarks());
+		System.out.println("$$$$####> Total Number of Calls to Planner: " + numberOfCallsPlanner);
+		return new GoalRecognitionResult(topFirstRankedPercent, convergencePercent, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), numberOfCallsPlanner);
 	}
 }

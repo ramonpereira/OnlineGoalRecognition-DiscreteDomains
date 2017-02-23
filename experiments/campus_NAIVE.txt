@@ -1,5 +1,9 @@
-# Average Ranked First Percent (%): 0.5977778
-# Average Convergence Percent (%): 0.35777774
-# Average Run-Time (sec): 0.46666668
+# Average Ranked First Percent (%): 0.6022222
+# Average Convergence Percent (%): 0.38
+# Average Run-Time (sec): 0.13333334
+# Average Candidate Goals: 2.0
+# Average Number of Observed Actions: 5.4
+# Average Number of Landmarks: 0.0
+# Average Number of Calls to Planner: 21.6
 
 # Total Problems: 15.0

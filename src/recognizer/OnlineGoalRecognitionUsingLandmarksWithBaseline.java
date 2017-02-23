@@ -30,6 +30,7 @@ public class OnlineGoalRecognitionUsingLandmarksWithBaseline extends OnlineGoalR
 		Map<GroundFact, Plan> goalsIdealPlans= new HashMap<>();
 		STRIPSState currentState = this.initialSTRIPSState;
 		System.out.println("#> Real Goal: " + this.realGoal);
+		float numberOfCallsPlanner = 0;
 		int observationCounter = 0;
 		float topFirstFrequency = 0;
 		float convergenceToTopRankedGoal = 0;
@@ -37,6 +38,7 @@ public class OnlineGoalRecognitionUsingLandmarksWithBaseline extends OnlineGoalR
 		for(GroundFact goal: this.candidateGoals){
 			System.out.println("\t # Goal:" + goal);
 			Plan idealPlan = doPlanJavaFF(initialState, goal);
+			numberOfCallsPlanner++;
 			goalsIdealPlans.put(goal, idealPlan);
 		}
 		for(Action o: this.observations){
@@ -64,6 +66,7 @@ public class OnlineGoalRecognitionUsingLandmarksWithBaseline extends OnlineGoalR
 				Plan idealPlanOfG = goalsIdealPlans.get(goal);
 				System.out.println("\t # Ideal Plan of G: " + idealPlanOfG.getPlanLength());
 				Plan mPlus = doPlanJavaFF(currentState.getFacts(), goal);
+				numberOfCallsPlanner++;
 				List<Action> mMinus = mObservationsGoals.get(goal);
 				System.out.println("\t # mMinus: " + mMinus.size());
 				System.out.println("\t # mPlus: " + mPlus.getPlanLength());
@@ -116,7 +119,7 @@ public class OnlineGoalRecognitionUsingLandmarksWithBaseline extends OnlineGoalR
 		System.out.println("$$$$####> Convergence Percent (%): " + convergencePercent);
 		System.out.println("$$$$####> Top Ranked First times: " + topFirstFrequency);
 		System.out.println("$$$$####> Total Observed Actions: " + observationCounter);
-		return new GoalRecognitionResult(topFirstRankedPercent, convergencePercent);
+		return new GoalRecognitionResult(topFirstRankedPercent, convergencePercent, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), numberOfCallsPlanner);
 	}
 
 	private Set<GroundFact> filterCandidateGoalsUsingLandmarks() {

@@ -72,7 +72,7 @@ public class OnlineGoalRecognitionUsingLandmarksGoalCompletion extends OnlineGoa
 		System.out.println("$$$$####> Convergence Percent (%): " + convergencePercent);
 		System.out.println("$$$$####> Top Ranked First times: " + topFirstFrequency);
 		System.out.println("$$$$####> Total Observed Actions: " + observationCounter);
-		return new GoalRecognitionResult(topFirstRankedPercent, convergencePercent);
+		return new GoalRecognitionResult(topFirstRankedPercent, convergencePercent, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), 0);
 	}
 	
 	private float heuristicLandmarksGoalCompletion(GroundFact goal){

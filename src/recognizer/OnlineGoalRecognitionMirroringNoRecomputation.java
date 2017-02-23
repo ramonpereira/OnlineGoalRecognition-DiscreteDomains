@@ -31,12 +31,14 @@ public class OnlineGoalRecognitionMirroringNoRecomputation extends OnlineGoalRec
 		Map<GroundFact, Plan> goalsMPlusPlans= new HashMap<>();
 		STRIPSState currentState = this.initialSTRIPSState;
 		System.out.println("#> Real Goal: " + this.realGoal);
+		float numberOfCallsPlanner = 0;
 		int observationCounter = 0;
 		float topFirstFrequency = 0;
 		float convergenceToTopRankedGoal = 0;
 		for(GroundFact goal: this.candidateGoals){
 			System.out.println("\t # Goal:" + goal);
 			Plan idealPlan = doPlanJavaFF(initialState, goal);
+			numberOfCallsPlanner++;
 			goalsIdealPlans.put(goal, idealPlan);
 		}
 		for(Action o: this.observations){
@@ -51,6 +53,7 @@ public class OnlineGoalRecognitionMirroringNoRecomputation extends OnlineGoalRec
 				float mG = 0;
 				if(observationCounter == 0){
 					Plan mPlus = doPlanJavaFF(currentState.getFacts(), goal);
+					numberOfCallsPlanner++;
 					goalsMPlusPlans.put(goal, mPlus);
 					mG = mPlus.getPlanLength()+1;
 				} else {
@@ -102,7 +105,7 @@ public class OnlineGoalRecognitionMirroringNoRecomputation extends OnlineGoalRec
 		System.out.println("$$$$####> Convergence Percent (%): " + convergencePercent);
 		System.out.println("$$$$####> Top Ranked First times: " + topFirstFrequency);
 		System.out.println("$$$$####> Total Observed Actions: " + observationCounter);
-		return new GoalRecognitionResult(topFirstRankedPercent, convergencePercent);
+		return new GoalRecognitionResult(topFirstRankedPercent, convergencePercent, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), numberOfCallsPlanner);
 	}
 	
 	private boolean containsActions(Plan mGPlus, List<Action> observations){
