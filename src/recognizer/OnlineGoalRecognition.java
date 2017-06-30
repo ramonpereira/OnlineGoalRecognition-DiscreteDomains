@@ -208,7 +208,7 @@ public abstract class OnlineGoalRecognition {
 			size += landmarkGenerator.getFactLandmarks().size();	
 		}
 		float avg = (size / this.candidateGoals.size());
-		System.out.println(avg);
+		//System.out.println(avg);
 		return avg;
 	}
 }
