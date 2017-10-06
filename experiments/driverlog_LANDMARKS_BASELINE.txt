@@ -1,0 +1,13 @@
+# Average Ranked First Percent (%): NaN
+# Average Convergence Percent (%): NaN
+# Average Run-Time (sec): Infinity
+# Average Candidate Goals: NaN
+# Average Number of Observed Actions: NaN
+# Average Number of Landmarks: NaN
+# Average Number of Calls to Planner: NaN
+# True Positive Ratio (TPR): NaN
+# False Positive Ratio (FPR): NaN
+# False Negative Ratio (FNR): NaN
+# Total Problems with Timeout: 28
+
+# Total Problems: 0.0

@@ -1,0 +1,12 @@
+# Average Ranked First Percent (%): 0.6135952
+# Average Convergence Percent (%): 0.59724176
+# Average Run-Time (sec): 1.2142857
+# Average Candidate Goals: 6.857143
+# Average Number of Observed Actions: 21.142857
+# Average Number of Landmarks: 8.571428
+# Average Number of Calls to Planner: 0.0
+# True Positive Ratio (TPR): 0.70817375
+# False Positive Ratio (FPR): 0.06405361
+# False Negative Ratio (FNR): 0.29182628
+
+# Total Problems: 28.0

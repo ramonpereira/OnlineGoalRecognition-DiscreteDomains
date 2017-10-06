@@ -6,7 +6,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+import bean.GoalRecognitionResult;
 import javaff.search.UnreachableGoalException;
 import recognizer.NaiveOnlineGoalRecognition;
 import recognizer.OnlineGoalRecognition;
@@ -16,7 +22,6 @@ import recognizer.OnlineGoalRecognitionUsingHeuristic;
 import recognizer.OnlineGoalRecognitionUsingLandmarksGoalCompletion;
 import recognizer.OnlineGoalRecognitionUsingLandmarksUniquenessHeuristic;
 import recognizer.OnlineGoalRecognitionUsingLandmarksWithBaseline;
-import bean.GoalRecognitionResult;
 
 public class OnlineGoalRecognitionBenchmark {
 
@@ -24,17 +29,31 @@ public class OnlineGoalRecognitionBenchmark {
 		runExperiments(approach, directoryPath, null);
 	}
 	
-	public static void runExperiments(GoalRecognitionApproach approach, String directoryPath, Float threshold) throws UnreachableGoalException, IOException, InterruptedException{
+	public static void runExperiments(final GoalRecognitionApproach approach, String directoryPath, final Float threshold) throws UnreachableGoalException, IOException, InterruptedException{
 		File folder = new File(directoryPath);
 		List<GoalRecognitionResult> results = new ArrayList<>();
 		long initialTime = System.currentTimeMillis();
-		for (File fileEntry : folder.listFiles()) {
+		int numberOfTimeoutProblems = 0;
+		for (final File fileEntry : folder.listFiles()) {
 	        if (!fileEntry.isDirectory()) {
 	        	if(fileEntry.getName().equalsIgnoreCase(".gitignore") || fileEntry.getName().equalsIgnoreCase(".DS_Store")) 
 	        		continue;
-	        	
-	        	OnlineGoalRecognition onlineRecognizer = getInstantiatedApproach(approach, fileEntry.toString(), (threshold == null ? 0 : threshold));
-	        	results.add(onlineRecognizer.recognizeOnline());
+
+	        	FutureTask<GoalRecognitionResult> timeoutTask = new FutureTask<GoalRecognitionResult>(new Callable<GoalRecognitionResult>() {
+	                @Override
+	                public GoalRecognitionResult call() throws Exception {
+	                	OnlineGoalRecognition onlineRecognizer = getInstantiatedApproach(approach, fileEntry.toString(), (threshold == null ? 0 : threshold));
+	                    return onlineRecognizer.recognizeOnline();
+	                }
+	            });
+	        	new Thread(timeoutTask).start();
+	        	try {
+					GoalRecognitionResult result = timeoutTask.get(120, TimeUnit.SECONDS);
+					results.add(result);
+				} catch (ExecutionException | TimeoutException e) {
+					numberOfTimeoutProblems++;
+					e.printStackTrace();
+				}
 	        }
 	    }
 		String outputFileContent = "";
@@ -44,6 +63,10 @@ public class OnlineGoalRecognitionBenchmark {
 		float totalObservations = 0;
 		float totalLandmarks = 0;
 		float totalNumberOfCallsPlanner = 0;
+		
+		float totalTPR = 0;
+		float totalFPR = 0;
+		float totalFNR = 0;
 		for(GoalRecognitionResult goalRecognitionResult: results){
 			totalTopFirstPercentage += goalRecognitionResult.getRankedFirstPercent();
 			totalConvergencePercentage += goalRecognitionResult.getConvergenceFirstPercent();
@@ -51,6 +74,9 @@ public class OnlineGoalRecognitionBenchmark {
 			totalObservations += goalRecognitionResult.getNumberOfObservations();
 			totalLandmarks += goalRecognitionResult.getNumberOfLandmarks();
 			totalNumberOfCallsPlanner += goalRecognitionResult.getNumberOfCallsPlanner();
+			totalTPR += goalRecognitionResult.getTruePositiveRatio();
+			totalFPR += goalRecognitionResult.getFalsePositiveRatio();
+			totalFNR += goalRecognitionResult.getFalseNegativeRatio();
 		}
 		long finalTime = System.currentTimeMillis();
 		float totalTime = ((finalTime - initialTime)/1000);
@@ -62,6 +88,10 @@ public class OnlineGoalRecognitionBenchmark {
 		outputFileContent += "\n# Average Number of Observed Actions: " + (totalObservations / totalProblems);
 		outputFileContent += "\n# Average Number of Landmarks: " + (totalLandmarks / totalProblems);
 		outputFileContent += "\n# Average Number of Calls to Planner: " + (totalNumberOfCallsPlanner / totalProblems);
+		outputFileContent += "\n# True Positive Ratio (TPR): " + (totalTPR / totalProblems);
+		outputFileContent += "\n# False Positive Ratio (FPR): " + (totalFPR / totalProblems);
+		outputFileContent += "\n# False Negative Ratio (FNR): " + (totalFNR / totalProblems);
+		outputFileContent += "\n# Total Problems with Timeout: " + numberOfTimeoutProblems;
 		outputFileContent += "\n\n# Total Problems: " + totalProblems;
 		writeExperimentFile(outputFileContent, folder.getAbsolutePath().toString() + "_" + approach + (threshold != null ? "_" + threshold : ""));
 	}

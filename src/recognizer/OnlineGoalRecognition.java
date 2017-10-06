@@ -12,7 +12,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
+import bean.GoalRecognitionResult;
+import extracting.PartialLandmarkGenerator;
 import javaff.JavaFF;
 import javaff.data.Action;
 import javaff.data.Fact;
@@ -25,10 +28,8 @@ import javaff.search.UnreachableGoalException;
 import landmark.LandmarkExtractor;
 import landmark.LandmarkOrdering;
 import parser.PDDLParser;
-import bean.GoalRecognitionResult;
-import extracting.PartialLandmarkGenerator;
 
-public abstract class OnlineGoalRecognition {
+public abstract class OnlineGoalRecognition implements Callable<GoalRecognitionResult> {
 
 	protected GroundProblem groundProblem;
 	protected List<GroundFact> candidateGoals;
@@ -205,10 +206,18 @@ public abstract class OnlineGoalRecognition {
 		int size = 0;
 		for(GroundFact goal: this.candidateGoals){
 			LandmarkExtractor landmarkGenerator = goalsToLandmarks.get(goal);
-			size += landmarkGenerator.getFactLandmarks().size();	
+			size += (landmarkGenerator == null ? 0 : landmarkGenerator.getFactLandmarks().size());	
 		}
 		float avg = (size / this.candidateGoals.size());
 		//System.out.println(avg);
 		return avg;
+	}
+	
+	public int getCandidateGoalsSize() {
+		return candidateGoals.size();
+	}
+	
+	public int getObservationsSize() {
+		return observations.size();
 	}
 }

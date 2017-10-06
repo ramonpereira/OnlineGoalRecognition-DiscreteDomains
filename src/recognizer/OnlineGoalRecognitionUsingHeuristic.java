@@ -35,6 +35,7 @@ public class OnlineGoalRecognitionUsingHeuristic extends OnlineGoalRecognition {
 		List<Action> observationsBuffer = new ArrayList<>();
 		STRIPSState currentState = this.initialSTRIPSState;
 		System.out.println("#> Real Goal: " + this.realGoal);
+		float returnedGoals = 0;
 		float numberOfCallsPlanner = 0;
 		int observationCounter = 0;
 		float topFirstFrequency = 0;
@@ -95,6 +96,7 @@ public class OnlineGoalRecognitionUsingHeuristic extends OnlineGoalRecognition {
 						recognizedGoals.add(goal);
 			} else System.out.println(" No recomputation of the probabilities is needed, the goal rankings remain the same.");
 			observationCounter++;
+			returnedGoals += recognizedGoals.size(); 
 			if(recognizedGoals.size() == 1 && recognizedGoals.contains(this.realGoal)){
 				topFirstFrequency++;
 				topRankedGoal = this.realGoal;
@@ -106,6 +108,7 @@ public class OnlineGoalRecognitionUsingHeuristic extends OnlineGoalRecognition {
 		System.out.println("\n$$$$####> Top First Ranked Percent (%): " + topFirstRankedPercent);
 		System.out.println("$$$$####> Convergence Percent (%): " + convergencePercent);
 		System.out.println("$$$$####> Top Ranked First times: " + topFirstFrequency);
+		System.out.println("$$$$####> Average Number of Returned Goals: " + (returnedGoals / observationCounter) + " (out of " + this.candidateGoals.size() + ")");
 		System.out.println("$$$$####> Total Observed Actions: " + observationCounter);
 		return new GoalRecognitionResult(topFirstRankedPercent, convergencePercent, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), numberOfCallsPlanner);
 	}
@@ -132,5 +135,10 @@ public class OnlineGoalRecognitionUsingHeuristic extends OnlineGoalRecognition {
 				minimumEstimatedDistance = estimateOfG;
 		}
 		return !(estimatedDistanceTopRankedGoal <= minimumEstimatedDistance);
+	}
+	
+	@Override
+	public GoalRecognitionResult call() throws Exception {
+		return this.recognizeOnline();
 	}
 }

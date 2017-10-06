@@ -33,9 +33,15 @@ public class OnlineGoalRecognitionUsingLandmarksGoalCompletion extends OnlineGoa
 	public GoalRecognitionResult recognizeOnline() throws UnreachableGoalException, IOException, InterruptedException {
 		STRIPSState currentState = this.initialSTRIPSState;
 		System.out.println("#> Real Goal: " + this.realGoal);
+		float returnedGoals = 0;
 		int observationCounter = 0;
 		float topFirstFrequency = 0;
 		float convergenceToTopRankedGoal = 0;
+		
+		float TPR = 0;
+		float FPR = 0;
+		float FNR = 0;
+		
 		Set<GroundFact> recognizedGoals = new HashSet<>();
 		this.extractLandmarks();
 		for(Action o: this.observations){
@@ -60,19 +66,50 @@ public class OnlineGoalRecognitionUsingLandmarksGoalCompletion extends OnlineGoa
 				if(goalsToEstimateCompletion.get(goal) >= (maxGoalCompletion - this.threshold))
 					recognizedGoals.add(goal);
 			
+			float truePositiveCounter = 0;
+			float trueNegativeCounter = 0;
+			float falsePositiveCounter = 0;
+			float falseNegativeCounter = 0;
+			float numberOfRecognizedGoals = recognizedGoals.size();
+			returnedGoals += numberOfRecognizedGoals; 
+			
+			if(recognizedGoals.contains(this.realGoal))
+				truePositiveCounter++;
+			
 			if(recognizedGoals.size() == 1 && recognizedGoals.contains(this.realGoal)){
 				topFirstFrequency++;
 				convergenceToTopRankedGoal++;
 			} else convergenceToTopRankedGoal = 0;
 			observationCounter++;
+			
+			falsePositiveCounter = (numberOfRecognizedGoals - truePositiveCounter);
+			trueNegativeCounter = (this.candidateGoals.size() - falsePositiveCounter);
+			falseNegativeCounter = (1 - truePositiveCounter);
+			
+			float tpr = (truePositiveCounter / (truePositiveCounter + falseNegativeCounter));
+			float fpr = (falsePositiveCounter / (falsePositiveCounter + trueNegativeCounter));
+			float fnr = (falseNegativeCounter / (falseNegativeCounter + truePositiveCounter));
+			
+			TPR += tpr;
+			FPR += fpr;
+			FNR += fnr;
+			
+			System.out.println("\n-> TPR: " + tpr);
+			System.out.println("-> FPR: " + fpr);
+			System.out.println("-> FNR: " + fnr);
+			System.out.println();
 		}
 		float topFirstRankedPercent  = (topFirstFrequency/observationCounter);
 		float convergencePercent = (convergenceToTopRankedGoal/observationCounter);
 		System.out.println("\n$$$$####> Top First Ranked Percent (%): " + topFirstRankedPercent);
 		System.out.println("$$$$####> Convergence Percent (%): " + convergencePercent);
 		System.out.println("$$$$####> Top Ranked First times: " + topFirstFrequency);
+		System.out.println("$$$$####> Average Number of Returned Goals: " + (returnedGoals / observationCounter) + " (out of " + this.candidateGoals.size() + ")");
 		System.out.println("$$$$####> Total Observed Actions: " + observationCounter);
-		return new GoalRecognitionResult(topFirstRankedPercent, convergencePercent, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), 0);
+		System.out.println("\n$$$$####> True Positive Ratio: " + (TPR/observationCounter));
+		System.out.println("$$$$####> False Positive Ratio: " + (FPR/observationCounter));
+		System.out.println("$$$$####> False Negative Ratio: " + (FNR/observationCounter));
+		return new GoalRecognitionResult((TPR/observationCounter), (FPR/observationCounter), (FNR/observationCounter), topFirstRankedPercent, convergencePercent, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), 0);
 	}
 	
 	private float heuristicLandmarksGoalCompletion(GroundFact goal){
@@ -85,5 +122,10 @@ public class OnlineGoalRecognitionUsingLandmarksGoalCompletion extends OnlineGoa
 			subgoalCompletion += (subgoalAmountOfAchievedLandmarks / subgoalAmountOfLandmarks);
 		}
 		return (subgoalCompletion / goal.getFacts().size());
+	}
+	
+	@Override
+	public GoalRecognitionResult call() throws Exception {
+		return this.recognizeOnline();
 	}
 }

@@ -5,5 +5,8 @@
 # Average Number of Observed Actions: 7.4666667
 # Average Number of Landmarks: 5.0
 # Average Number of Calls to Planner: 0.0
+# True Positive Ratio (TPR): 1.0
+# False Positive Ratio (FPR): 0.5072222
+# False Negative Ratio (FNR): 0.0
 
 # Total Problems: 15.0

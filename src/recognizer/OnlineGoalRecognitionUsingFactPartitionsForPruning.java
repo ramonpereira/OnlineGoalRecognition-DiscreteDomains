@@ -22,4 +22,9 @@ public class OnlineGoalRecognitionUsingFactPartitionsForPruning extends OnlineGo
 	public GoalRecognitionResult recognizeOnline() throws UnreachableGoalException {
 		return null;
 	}
+	
+	@Override
+	public GoalRecognitionResult call() throws Exception {
+		return this.recognizeOnline();
+	}
 }

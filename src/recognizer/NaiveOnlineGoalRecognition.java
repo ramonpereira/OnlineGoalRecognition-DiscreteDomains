@@ -90,4 +90,9 @@ public class NaiveOnlineGoalRecognition extends OnlineGoalRecognition {
 		System.out.println("$$$$####> Total Number of Calls to Planner: " + numberOfCallsPlanner);
 		return new GoalRecognitionResult(topFirstRankedPercent, convergencePercent, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), numberOfCallsPlanner);
 	}
+
+	@Override
+	public GoalRecognitionResult call() throws Exception {
+		return this.recognizeOnline();
+	}
 }
