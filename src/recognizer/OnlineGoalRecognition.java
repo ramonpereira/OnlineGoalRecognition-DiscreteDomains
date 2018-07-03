@@ -209,7 +209,6 @@ public abstract class OnlineGoalRecognition implements Callable<GoalRecognitionR
 			size += (landmarkGenerator == null ? 0 : landmarkGenerator.getFactLandmarks().size());	
 		}
 		float avg = (size / this.candidateGoals.size());
-		//System.out.println(avg);
 		return avg;
 	}
 	
@@ -219,5 +218,9 @@ public abstract class OnlineGoalRecognition implements Callable<GoalRecognitionR
 	
 	public int getObservationsSize() {
 		return observations.size();
+	}
+	
+	public String getRecognitionFileName() {
+		return recognitionFileName;
 	}
 }

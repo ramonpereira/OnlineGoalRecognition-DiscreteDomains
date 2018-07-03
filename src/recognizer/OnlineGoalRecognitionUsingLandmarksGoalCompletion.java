@@ -1,19 +1,20 @@
 package recognizer;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import bean.GoalRecognitionResult;
 import javaff.data.Action;
 import javaff.data.Fact;
 import javaff.data.GroundFact;
 import javaff.planning.STRIPSState;
 import javaff.search.UnreachableGoalException;
 import landmark.LandmarkOrdering;
-import bean.GoalRecognitionResult;
 
 /**
  * Online Goal Recognition Approach that uses a landmark-based heuristic (goal completion heuristic).
@@ -41,6 +42,8 @@ public class OnlineGoalRecognitionUsingLandmarksGoalCompletion extends OnlineGoa
 		float TPR = 0;
 		float FPR = 0;
 		float FNR = 0;
+		
+		long initialTime = System.currentTimeMillis();
 		
 		Set<GroundFact> recognizedGoals = new HashSet<>();
 		this.extractLandmarks();
@@ -93,12 +96,14 @@ public class OnlineGoalRecognitionUsingLandmarksGoalCompletion extends OnlineGoa
 			TPR += tpr;
 			FPR += fpr;
 			FNR += fnr;
-			
-			System.out.println("\n-> TPR: " + tpr);
-			System.out.println("-> FPR: " + fpr);
-			System.out.println("-> FNR: " + fnr);
-			System.out.println();
 		}
+		long finalTime = System.currentTimeMillis();
+		BigDecimal finalTimeBigDecimal = BigDecimal.valueOf(finalTime);
+		BigDecimal initialTimeBigDecimal = BigDecimal.valueOf(initialTime);
+		BigDecimal resultingTime = finalTimeBigDecimal.subtract(initialTimeBigDecimal);
+		
+		BigDecimal totalTime = resultingTime.divide(BigDecimal.valueOf(1000));
+		
 		float topFirstRankedPercent  = (topFirstFrequency/observationCounter);
 		float convergencePercent = (convergenceToTopRankedGoal/observationCounter);
 		System.out.println("\n$$$$####> Top First Ranked Percent (%): " + topFirstRankedPercent);
@@ -109,7 +114,7 @@ public class OnlineGoalRecognitionUsingLandmarksGoalCompletion extends OnlineGoa
 		System.out.println("\n$$$$####> True Positive Ratio: " + (TPR/observationCounter));
 		System.out.println("$$$$####> False Positive Ratio: " + (FPR/observationCounter));
 		System.out.println("$$$$####> False Negative Ratio: " + (FNR/observationCounter));
-		return new GoalRecognitionResult((TPR/observationCounter), (FPR/observationCounter), (FNR/observationCounter), topFirstRankedPercent, convergencePercent, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), 0);
+		return new GoalRecognitionResult(this.getRecognitionFileName(), (TPR/observationCounter), (FPR/observationCounter), (FNR/observationCounter), topFirstRankedPercent, convergencePercent, totalTime, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), 0);
 	}
 	
 	private float heuristicLandmarksGoalCompletion(GroundFact goal){

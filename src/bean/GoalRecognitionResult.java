@@ -1,5 +1,7 @@
 package bean;
 
+import java.math.BigDecimal;
+
 public class GoalRecognitionResult {
 
 	private float rankedFirstPercent;
@@ -13,6 +15,9 @@ public class GoalRecognitionResult {
 	private float numberOfObservations;
 	private float numberOfLandmarks;
 	private float numberOfCallsPlanner;
+	
+	private BigDecimal totalTime;
+	private String problemFilename;
 	
 	public GoalRecognitionResult(float rankedFirstPercent, float convergenceFirstPercent, 
 			float numberOfCandidateGoals, float numberOfObservations, 
@@ -34,6 +39,23 @@ public class GoalRecognitionResult {
 		this.falseNegativeRatio = falseNegativeRatio;
 		this.rankedFirstPercent = rankedFirstPercent;
 		this.convergenceFirstPercent = convergenceFirstPercent;
+		this.numberOfCandidateGoals = numberOfCandidateGoals;
+		this.numberOfObservations = numberOfObservations;
+		this.numberOfLandmarks = numberOfLandmarks;
+		this.numberOfCallsPlanner = numberOfCallsPlanner;
+	}
+	
+	public GoalRecognitionResult(String problemFilename, float truePositiveRatio, float falsePositiveRatio, float falseNegativeRatio, 
+			float rankedFirstPercent, float convergenceFirstPercent, BigDecimal totalTime, 
+			float numberOfCandidateGoals, float numberOfObservations, 
+			float numberOfLandmarks, float numberOfCallsPlanner){
+		this.problemFilename = problemFilename;
+		this.truePositiveRatio = truePositiveRatio;
+		this.falsePositiveRatio = falsePositiveRatio;
+		this.falseNegativeRatio = falseNegativeRatio;
+		this.rankedFirstPercent = rankedFirstPercent;
+		this.convergenceFirstPercent = convergenceFirstPercent;
+		this.totalTime = totalTime;
 		this.numberOfCandidateGoals = numberOfCandidateGoals;
 		this.numberOfObservations = numberOfObservations;
 		this.numberOfLandmarks = numberOfLandmarks;
@@ -74,5 +96,13 @@ public class GoalRecognitionResult {
 	
 	public float getNumberOfCallsPlanner() {
 		return numberOfCallsPlanner;
+	}
+	
+	public BigDecimal getTotalTime() {
+		return totalTime;
+	}
+	
+	public String getProblemFilename() {
+		return problemFilename;
 	}
 }

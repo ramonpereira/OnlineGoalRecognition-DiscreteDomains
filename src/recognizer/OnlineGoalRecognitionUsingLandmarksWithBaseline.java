@@ -1,6 +1,7 @@
 package recognizer;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,6 +41,8 @@ public class OnlineGoalRecognitionUsingLandmarksWithBaseline extends OnlineGoalR
 		float TPR = 0;
 		float FPR = 0;
 		float FNR = 0;
+		
+		long initialTime = System.currentTimeMillis();
 		
 		for(GroundFact goal: this.candidateGoals){
 			System.out.println("\t # Goal:" + goal);
@@ -137,12 +140,14 @@ public class OnlineGoalRecognitionUsingLandmarksWithBaseline extends OnlineGoalR
 			TPR += tpr;
 			FPR += fpr;
 			FNR += fnr;
-			
-			System.out.println("\n-> TPR: " + tpr);
-			System.out.println("-> FPR: " + fpr);
-			System.out.println("-> FNR: " + fnr);
-			System.out.println();
 		}
+		long finalTime = System.currentTimeMillis();
+		BigDecimal finalTimeBigDecimal = BigDecimal.valueOf(finalTime);
+		BigDecimal initialTimeBigDecimal = BigDecimal.valueOf(initialTime);
+		BigDecimal resultingTime = finalTimeBigDecimal.subtract(initialTimeBigDecimal);
+		
+		BigDecimal totalTime = resultingTime.divide(BigDecimal.valueOf(1000));
+		
 		float topFirstRankedPercent  = (topFirstFrequency/observationCounter);
 		float convergencePercent = (convergenceToTopRankedGoal/observationCounter);
 		System.out.println("\n$$$$####> Top First Ranked Percent (%): " + topFirstRankedPercent);
@@ -153,7 +158,7 @@ public class OnlineGoalRecognitionUsingLandmarksWithBaseline extends OnlineGoalR
 		System.out.println("\n$$$$####> True Positive Ratio: " + (TPR/observationCounter));
 		System.out.println("$$$$####> False Positive Ratio: " + (FPR/observationCounter));
 		System.out.println("$$$$####> False Negative Ratio: " + (FNR/observationCounter));
-		return new GoalRecognitionResult((TPR/observationCounter), (FPR/observationCounter), (FNR/observationCounter), topFirstRankedPercent, convergencePercent, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), numberOfCallsPlanner);
+		return new GoalRecognitionResult(this.getRecognitionFileName(), (TPR/observationCounter), (FPR/observationCounter), (FNR/observationCounter), topFirstRankedPercent, convergencePercent, totalTime, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), numberOfCallsPlanner);
 	}
 
 	private Set<GroundFact> filterCandidateGoalsUsingLandmarks() {
@@ -170,7 +175,6 @@ public class OnlineGoalRecognitionUsingLandmarksWithBaseline extends OnlineGoalR
 		}
 		Set<GroundFact> filteredGoals = new HashSet<>();
 		for(GroundFact goal: this.candidateGoals)
-			//if(highestValue == goalsToPercentageOfAchievedLandmarks.get(goal))
 			if(goalsToPercentageOfAchievedLandmarks.get(goal) >= (highestValue - this.threshold))	
 				filteredGoals.add(goal);
 		

@@ -29,6 +29,59 @@ public class OnlineGoalRecognitionBenchmark {
 		runExperiments(approach, directoryPath, null);
 	}
 	
+	public static void runExperiments30times(GoalRecognitionApproach approach, String directoryPath) throws UnreachableGoalException, IOException, InterruptedException{
+		runExperiments30times(approach, directoryPath, null);
+	}
+	
+	public static void runExperiments30times(final GoalRecognitionApproach approach, String directoryPath, final Float threshold) throws UnreachableGoalException, IOException, InterruptedException{
+		File folder = new File(directoryPath);
+		List<List<GoalRecognitionResult>> allResults = new ArrayList<>();
+		@SuppressWarnings("unused")
+		int numberOfTimeoutProblems = 0;
+		for (final File fileEntry : folder.listFiles()) {
+	        if (!fileEntry.isDirectory()) {
+	        	if(!fileEntry.getName().endsWith(".tar.bz2")) 
+	        		continue;
+
+	        	FutureTask<List<GoalRecognitionResult>> timeoutTask = new FutureTask<List<GoalRecognitionResult>>(new Callable<List<GoalRecognitionResult>>() {
+	                @Override
+	                public List<GoalRecognitionResult> call() throws Exception {
+	                	List<GoalRecognitionResult> results = new ArrayList<>();
+	                	for(int i=1; i<=30; i++){
+		        			System.out.println(fileEntry.toString());
+		        			System.out.println("# RUN: " + i);
+	                		OnlineGoalRecognition onlineRecognizer = getInstantiatedApproach(approach, fileEntry.toString(), (threshold == null ? 0 : threshold));
+	                		results.add(onlineRecognizer.recognizeOnline());
+	                	}
+	                    return results;
+	                }
+	            });
+	        	new Thread(timeoutTask).start();
+	        	try {
+					List<GoalRecognitionResult> results = timeoutTask.get(120, TimeUnit.SECONDS);
+					allResults.add(results);
+				} catch (ExecutionException | TimeoutException e) {
+					numberOfTimeoutProblems++;
+					e.printStackTrace();
+				}
+	        }
+	    }
+		
+		for(List<GoalRecognitionResult> goalRecognitionResults: allResults){
+			String problemFileName = goalRecognitionResults.get(0).getProblemFilename();
+			problemFileName = problemFileName.replace(".tar.bz2", "");
+			
+			String outputFileContent = "";
+			for(GoalRecognitionResult result: goalRecognitionResults){
+				outputFileContent += result.getTotalTime() + "\t" + result.getNumberOfCallsPlanner() 
+									+ ";" + result.getTruePositiveRatio() + ";" + result.getFalsePositiveRatio() 
+									+ ";" + result.getRankedFirstPercent() + ";" + result.getConvergenceFirstPercent() + "\n";
+				
+			}
+			writeExperimentFile(outputFileContent, problemFileName + "_" + approach + (threshold != null ? "_" + threshold : ""));
+		}
+	}
+	
 	public static void runExperiments(final GoalRecognitionApproach approach, String directoryPath, final Float threshold) throws UnreachableGoalException, IOException, InterruptedException{
 		File folder = new File(directoryPath);
 		List<GoalRecognitionResult> results = new ArrayList<>();
@@ -36,7 +89,7 @@ public class OnlineGoalRecognitionBenchmark {
 		int numberOfTimeoutProblems = 0;
 		for (final File fileEntry : folder.listFiles()) {
 	        if (!fileEntry.isDirectory()) {
-	        	if(fileEntry.getName().equalsIgnoreCase(".gitignore") || fileEntry.getName().equalsIgnoreCase(".DS_Store")) 
+	        	if(!fileEntry.getName().endsWith(".tar.bz2")) 
 	        		continue;
 
 	        	FutureTask<GoalRecognitionResult> timeoutTask = new FutureTask<GoalRecognitionResult>(new Callable<GoalRecognitionResult>() {
