@@ -50,9 +50,13 @@ public abstract class OnlineGoalRecognition implements Callable<GoalRecognitionR
 			this.recognitionFileName = fileName;
 			if(!Files.isReadable(Paths.get(fileName)))
 				throw new IOException(fileName + " not found.");
-			
+
+			String cmdRemovingFiles = "rm -rf domain.pddl template.pddl templateInitial.pddl obs.dat hyps.dat plan.png real_hyp.dat";
+			System.out.println(cmdRemovingFiles);
+			Process p = Runtime.getRuntime().exec(cmdRemovingFiles);
+			p.waitFor();
 			System.out.println("tar -jxvf " + this.recognitionFileName);
-			Process p = Runtime.getRuntime().exec("tar -jxvf " + this.recognitionFileName);
+			p = Runtime.getRuntime().exec("tar -jxvf " + this.recognitionFileName);
 			p.waitFor();
 			String domainFilePath = "domain.pddl";
 			Path path = Paths.get(domainFilePath);

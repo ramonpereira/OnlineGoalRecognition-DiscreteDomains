@@ -16,7 +16,7 @@ import recognizer.OnlineGoalRecognitionUsingLandmarksWithBaseline;
 public class OnlineGoalRecognitionTest {
 
 	public static String GOALRECOGNITION_PROBLEM = 
-			"experiments/depots/depots_p01_hyp-4_full.tar.bz2";
+			"experiments/hanoi/pb03_hanoi_out_100.tar.bz2";
 	
 	@Test
 	public void testNaiveOnlineGoalRecognition(){
