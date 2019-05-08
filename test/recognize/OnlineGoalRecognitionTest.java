@@ -5,13 +5,13 @@ import javaff.search.UnreachableGoalException;
 
 import org.junit.Test;
 
-import recognizer.NaiveOnlineGoalRecognition;
+import recognizer.OnlineGoalRecognitionNaive;
 import recognizer.OnlineGoalRecognitionMirroringBaseline;
 import recognizer.OnlineGoalRecognitionMirroringNoRecomputation;
 import recognizer.OnlineGoalRecognitionUsingHeuristic;
 import recognizer.OnlineGoalRecognitionUsingLandmarksGoalCompletion;
 import recognizer.OnlineGoalRecognitionUsingLandmarksUniquenessHeuristic;
-import recognizer.OnlineGoalRecognitionUsingLandmarksWithBaseline;
+import recognizer.OnlineGoalRecognitionMirroringWithLandmarks;
 
 public class OnlineGoalRecognitionTest {
 
@@ -20,7 +20,7 @@ public class OnlineGoalRecognitionTest {
 	
 	@Test
 	public void testNaiveOnlineGoalRecognition(){
-		NaiveOnlineGoalRecognition naiveGoalRecognition = new NaiveOnlineGoalRecognition(GOALRECOGNITION_PROBLEM);
+		OnlineGoalRecognitionNaive naiveGoalRecognition = new OnlineGoalRecognitionNaive(GOALRECOGNITION_PROBLEM);
 		try {
 			naiveGoalRecognition.recognizeOnline();
 		} catch (UnreachableGoalException e) {
@@ -83,7 +83,7 @@ public class OnlineGoalRecognitionTest {
 	@Test
 	public void testOnlineGoalRecognitionUsingLandmarksWithBaseline(){
 		float threshold = 0;
-		OnlineGoalRecognitionUsingLandmarksWithBaseline recognizer = new OnlineGoalRecognitionUsingLandmarksWithBaseline(GOALRECOGNITION_PROBLEM, threshold);
+		OnlineGoalRecognitionMirroringWithLandmarks recognizer = new OnlineGoalRecognitionMirroringWithLandmarks(GOALRECOGNITION_PROBLEM, threshold);
 		try {
 			recognizer.recognizeOnline();
 		} catch (UnreachableGoalException | IOException | InterruptedException e) {

@@ -1,4 +1,5 @@
 package recognizer;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -135,6 +136,11 @@ public class OnlineGoalRecognitionMirroringBaseline extends OnlineGoalRecognitio
 		System.out.println("$$$$####> False Negative Ratio: " + (FNR/observationCounter));
 		return new GoalRecognitionResult((TPR/observationCounter), (FPR/observationCounter), (FNR/observationCounter), topFirstRankedPercent, convergencePercent, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), numberOfCallsPlanner);
 	}
+	
+	@Override
+	public GoalRecognitionResult recognizeOffline() throws UnreachableGoalException, IOException, InterruptedException {
+		return null;
+	}	
 	
 	@Override
 	public GoalRecognitionResult call() throws Exception {

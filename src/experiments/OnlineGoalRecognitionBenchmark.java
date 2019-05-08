@@ -14,14 +14,14 @@ import java.util.concurrent.TimeoutException;
 
 import bean.GoalRecognitionResult;
 import javaff.search.UnreachableGoalException;
-import recognizer.NaiveOnlineGoalRecognition;
+import recognizer.OnlineGoalRecognitionNaive;
 import recognizer.OnlineGoalRecognition;
 import recognizer.OnlineGoalRecognitionMirroringBaseline;
 import recognizer.OnlineGoalRecognitionMirroringNoRecomputation;
 import recognizer.OnlineGoalRecognitionUsingHeuristic;
 import recognizer.OnlineGoalRecognitionUsingLandmarksGoalCompletion;
 import recognizer.OnlineGoalRecognitionUsingLandmarksUniquenessHeuristic;
-import recognizer.OnlineGoalRecognitionUsingLandmarksWithBaseline;
+import recognizer.OnlineGoalRecognitionMirroringWithLandmarks;
 
 public class OnlineGoalRecognitionBenchmark {
 
@@ -154,13 +154,13 @@ public class OnlineGoalRecognitionBenchmark {
 		if(approach == GoalRecognitionApproach.BASELINE){
 	        instantiatedApproach = new OnlineGoalRecognitionMirroringBaseline(goalRecognitionProblem);
 		} else if(approach == GoalRecognitionApproach.NAIVE){
-			instantiatedApproach = new NaiveOnlineGoalRecognition(goalRecognitionProblem);
+			instantiatedApproach = new OnlineGoalRecognitionNaive(goalRecognitionProblem);
 		} else if(approach == GoalRecognitionApproach.NO_RECOMPUTATION){
 			instantiatedApproach = new OnlineGoalRecognitionMirroringNoRecomputation(goalRecognitionProblem);
 		} else if(approach == GoalRecognitionApproach.HEURISTIC){
 			instantiatedApproach = new OnlineGoalRecognitionUsingHeuristic(goalRecognitionProblem);
 		} else if(approach == GoalRecognitionApproach.LANDMARKS_BASELINE){
-				instantiatedApproach = new OnlineGoalRecognitionUsingLandmarksWithBaseline(goalRecognitionProblem, threshold);
+				instantiatedApproach = new OnlineGoalRecognitionMirroringWithLandmarks(goalRecognitionProblem, threshold);
 		} else if(approach == GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC){
 			instantiatedApproach = new OnlineGoalRecognitionUsingLandmarksGoalCompletion(goalRecognitionProblem, threshold);
 		} else if(approach == GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC){

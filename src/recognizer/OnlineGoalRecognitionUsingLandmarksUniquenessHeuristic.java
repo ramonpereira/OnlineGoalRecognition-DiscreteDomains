@@ -7,12 +7,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import bean.GoalRecognitionResult;
 import javaff.data.Action;
 import javaff.data.Fact;
 import javaff.data.GroundFact;
 import javaff.planning.STRIPSState;
 import javaff.search.UnreachableGoalException;
-import bean.GoalRecognitionResult;
 
 /**
  * Online Goal Recognition Approach that uses a landmark-based heuristic (uniqueness heuristic).
@@ -113,6 +113,11 @@ public class OnlineGoalRecognitionUsingLandmarksUniquenessHeuristic extends Onli
 		System.out.println("$$$$####> False Negative Ratio: " + (FNR/observationCounter));
 		return new GoalRecognitionResult((TPR/observationCounter), (FPR/observationCounter), (FNR/observationCounter), topFirstRankedPercent, convergencePercent, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), 0);
 	}
+	
+	@Override
+	public GoalRecognitionResult recognizeOffline() throws UnreachableGoalException, IOException, InterruptedException {
+		return null;
+	}	
 	
 	public void verifyFactLandmarksUniqueness(){
 		Set<Set<Fact>> extractedLandmarks = new HashSet<>();

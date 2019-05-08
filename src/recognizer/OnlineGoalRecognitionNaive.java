@@ -1,4 +1,5 @@
 package recognizer;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,9 +14,9 @@ import javaff.planning.STRIPSState;
 import javaff.search.UnreachableGoalException;
 import bean.GoalRecognitionResult;
 
-public class NaiveOnlineGoalRecognition extends OnlineGoalRecognition {
+public class OnlineGoalRecognitionNaive extends OnlineGoalRecognition {
 
-	public NaiveOnlineGoalRecognition(String fileName){
+	public OnlineGoalRecognitionNaive(String fileName){
 		super(fileName);
 	}
 	
@@ -94,5 +95,10 @@ public class NaiveOnlineGoalRecognition extends OnlineGoalRecognition {
 	@Override
 	public GoalRecognitionResult call() throws Exception {
 		return this.recognizeOnline();
+	}
+
+	@Override
+	public GoalRecognitionResult recognizeOffline() throws UnreachableGoalException, IOException, InterruptedException {
+		return null;
 	}
 }

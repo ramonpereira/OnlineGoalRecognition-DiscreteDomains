@@ -2,6 +2,7 @@ package recognizer;
 import heuristic.FFHeuristic;
 import heuristic.Heuristic;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -135,6 +136,11 @@ public class OnlineGoalRecognitionUsingHeuristic extends OnlineGoalRecognition {
 				minimumEstimatedDistance = estimateOfG;
 		}
 		return !(estimatedDistanceTopRankedGoal <= minimumEstimatedDistance);
+	}
+	
+	@Override
+	public GoalRecognitionResult recognizeOffline() throws UnreachableGoalException, IOException, InterruptedException {
+		return null;
 	}
 	
 	@Override

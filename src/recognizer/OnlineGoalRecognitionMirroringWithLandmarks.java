@@ -16,11 +16,11 @@ import javaff.planning.STRIPSState;
 import javaff.search.UnreachableGoalException;
 import bean.GoalRecognitionResult;
 
-public class OnlineGoalRecognitionUsingLandmarksWithBaseline extends OnlineGoalRecognition {
+public class OnlineGoalRecognitionMirroringWithLandmarks extends OnlineGoalRecognition {
 
 	private float threshold;
 	
-	public OnlineGoalRecognitionUsingLandmarksWithBaseline(String fileName, float threshold) {
+	public OnlineGoalRecognitionMirroringWithLandmarks(String fileName, float threshold) {
 		super(fileName);
 		this.threshold = threshold;
 	}
@@ -180,6 +180,11 @@ public class OnlineGoalRecognitionUsingLandmarksWithBaseline extends OnlineGoalR
 		
 		return filteredGoals;
 	}
+	
+	@Override
+	public GoalRecognitionResult recognizeOffline() throws UnreachableGoalException, IOException, InterruptedException {
+		return null;
+	}	
 	
 	@Override
 	public GoalRecognitionResult call() throws Exception {

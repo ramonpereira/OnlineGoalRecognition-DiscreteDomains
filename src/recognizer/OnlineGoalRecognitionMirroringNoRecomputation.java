@@ -1,4 +1,5 @@
 package recognizer;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -66,7 +67,7 @@ public class OnlineGoalRecognitionMirroringNoRecomputation extends OnlineGoalRec
 						mObservationsGoals.put(goal, mMinusNew);
 					} else mMinus.add(o);
 					Plan mGPlus = goalsMPlusPlans.get(goal);
-					if(containsActions(mGPlus, mMinus))
+					if(containActions(mGPlus, mMinus))
 						mG = mGPlus.getPlanLength()+1;
 				}
 				float score = 0;
@@ -111,7 +112,12 @@ public class OnlineGoalRecognitionMirroringNoRecomputation extends OnlineGoalRec
 		return new GoalRecognitionResult(topFirstRankedPercent, convergencePercent, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), numberOfCallsPlanner);
 	}
 	
-	private boolean containsActions(Plan mGPlus, List<Action> observations){
+	@Override
+	public GoalRecognitionResult recognizeOffline() throws UnreachableGoalException, IOException, InterruptedException {
+		return null;
+	}	
+	
+	private boolean containActions(Plan mGPlus, List<Action> observations){
 		for(int i=0;i<observations.size();i++)
 			if(!observations.get(i).toString().equalsIgnoreCase(mGPlus.getActions().get(i).toString()))
 				return false;

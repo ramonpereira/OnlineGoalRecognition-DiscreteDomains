@@ -117,6 +117,11 @@ public class OnlineGoalRecognitionUsingLandmarksGoalCompletion extends OnlineGoa
 		return new GoalRecognitionResult(this.getRecognitionFileName(), (TPR/observationCounter), (FPR/observationCounter), (FNR/observationCounter), topFirstRankedPercent, convergencePercent, totalTime, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), 0);
 	}
 	
+	@Override
+	public GoalRecognitionResult recognizeOffline() throws UnreachableGoalException, IOException, InterruptedException {
+		return null;
+	}	
+	
 	private float heuristicLandmarksGoalCompletion(GroundFact goal){
 		float subgoalCompletion = 0f;
 		List<LandmarkOrdering> subgoalLandmarksOrdering = this.goalsToLandmarks.get(goal).getLandmarksOrdering();

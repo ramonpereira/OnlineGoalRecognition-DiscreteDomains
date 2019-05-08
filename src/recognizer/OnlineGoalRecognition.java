@@ -45,6 +45,8 @@ public abstract class OnlineGoalRecognition implements Callable<GoalRecognitionR
 	
 	public abstract GoalRecognitionResult recognizeOnline() throws UnreachableGoalException, IOException, InterruptedException;
 	
+	public abstract GoalRecognitionResult recognizeOffline() throws UnreachableGoalException, IOException, InterruptedException;
+	
 	public OnlineGoalRecognition(String fileName){
 		try{
 			this.recognitionFileName = fileName;

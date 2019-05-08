@@ -1,6 +1,9 @@
 package recognizer;
 
 import javaff.search.UnreachableGoalException;
+
+import java.io.IOException;
+
 import bean.GoalRecognitionResult;
 
 public class OnlineGoalRecognitionUsingFactPartitionsForPruning extends OnlineGoalRecognition {
@@ -22,6 +25,11 @@ public class OnlineGoalRecognitionUsingFactPartitionsForPruning extends OnlineGo
 	public GoalRecognitionResult recognizeOnline() throws UnreachableGoalException {
 		return null;
 	}
+	
+	@Override
+	public GoalRecognitionResult recognizeOffline() throws UnreachableGoalException, IOException, InterruptedException {
+		return null;
+	}	
 	
 	@Override
 	public GoalRecognitionResult call() throws Exception {
