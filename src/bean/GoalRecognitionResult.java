@@ -15,9 +15,18 @@ public class GoalRecognitionResult {
 	private float numberOfObservations;
 	private float numberOfLandmarks;
 	private float numberOfCallsPlanner;
+	private int numberOfRecognizedGoals;
+	
+	private boolean goalWasRecognized;
 	
 	private BigDecimal totalTime;
 	private String problemFilename;
+	
+	public GoalRecognitionResult(boolean goalWasRecognized, int numberOfRecognizedGoals, BigDecimal totalTime){
+		this.goalWasRecognized = goalWasRecognized;
+		this.numberOfRecognizedGoals = numberOfRecognizedGoals;
+		this.totalTime = totalTime;
+	}
 	
 	public GoalRecognitionResult(float rankedFirstPercent, float convergenceFirstPercent, 
 			float numberOfCandidateGoals, float numberOfObservations, 
@@ -104,5 +113,13 @@ public class GoalRecognitionResult {
 	
 	public String getProblemFilename() {
 		return problemFilename;
+	}
+	
+	public int getNumberOfRecognizedGoals() {
+		return numberOfRecognizedGoals;
+	}
+
+	public boolean getGoalWasRecognized() {
+		return goalWasRecognized;
 	}
 }

@@ -1,17 +1,16 @@
 package recognize;
 import java.io.IOException;
 
-import javaff.search.UnreachableGoalException;
-
 import org.junit.Test;
 
-import recognizer.OnlineGoalRecognitionNaive;
+import javaff.search.UnreachableGoalException;
 import recognizer.OnlineGoalRecognitionMirroringBaseline;
 import recognizer.OnlineGoalRecognitionMirroringNoRecomputation;
+import recognizer.OnlineGoalRecognitionMirroringWithLandmarks;
+import recognizer.OnlineGoalRecognitionNaive;
 import recognizer.OnlineGoalRecognitionUsingHeuristic;
 import recognizer.OnlineGoalRecognitionUsingLandmarksGoalCompletion;
 import recognizer.OnlineGoalRecognitionUsingLandmarksUniquenessHeuristic;
-import recognizer.OnlineGoalRecognitionMirroringWithLandmarks;
 
 public class OnlineGoalRecognitionTest {
 
@@ -81,7 +80,7 @@ public class OnlineGoalRecognitionTest {
 	}
 	
 	@Test
-	public void testOnlineGoalRecognitionUsingLandmarksWithBaseline(){
+	public void testOnlineGoalRecognitionMirroringWithLandmarks(){
 		float threshold = 0;
 		OnlineGoalRecognitionMirroringWithLandmarks recognizer = new OnlineGoalRecognitionMirroringWithLandmarks(GOALRECOGNITION_PROBLEM, threshold);
 		try {

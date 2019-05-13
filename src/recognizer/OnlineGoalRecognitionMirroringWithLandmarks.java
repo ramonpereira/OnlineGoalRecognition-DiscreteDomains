@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import bean.GoalRecognitionResult;
 import javaff.data.Action;
 import javaff.data.GroundFact;
 import javaff.data.Plan;
 import javaff.planning.STRIPSState;
 import javaff.search.UnreachableGoalException;
-import bean.GoalRecognitionResult;
 
 public class OnlineGoalRecognitionMirroringWithLandmarks extends OnlineGoalRecognition {
 
@@ -183,7 +183,95 @@ public class OnlineGoalRecognitionMirroringWithLandmarks extends OnlineGoalRecog
 	
 	@Override
 	public GoalRecognitionResult recognizeOffline() throws UnreachableGoalException, IOException, InterruptedException {
-		return null;
+		Map<GroundFact, List<Action>> mObservationsGoals = new HashMap<>();
+		Map<GroundFact, Plan> goalsIdealPlans= new HashMap<>();
+		STRIPSState currentState = this.initialSTRIPSState;
+		System.out.println("#> Real Goal: " + this.realGoal);
+		this.extractLandmarks();
+		
+		long initialTime = System.currentTimeMillis();
+		
+		System.out.println("\n@@@> Computing Ideal Plans");
+		for(GroundFact goal: this.candidateGoals){
+			System.out.println("\t # Goal:" + goal);
+			Plan idealPlan = doPlanJavaFF(initialState, goal);
+			goalsIdealPlans.put(goal, idealPlan);
+		}
+		
+		Action lastObservation = this.observations.get(this.observations.size()-1);
+		for(Action o: this.observations)
+			currentState = (STRIPSState) currentState.apply(o);
+		
+		currentState = (STRIPSState) currentState.apply(lastObservation);
+		Map<GroundFact, Float> goalsToScores = new HashMap<>();
+		Map<GroundFact, Integer> goalsToMPlus = new HashMap<>();
+		Set<GroundFact> filteredCandidateGoals = new HashSet<>();
+		float sumOfScores = 0f;
+		for(GroundFact goal: this.candidateGoals){
+			this.computeAchievedLandmarks(goal, lastObservation, currentState);
+			List<Action> mMinus = mObservationsGoals.get(goal);
+			if(mMinus == null){
+				List<Action> mMinusNew = new ArrayList<Action>();
+				mMinus = mMinusNew;
+				mMinusNew.add(lastObservation);
+				mObservationsGoals.put(goal, mMinusNew);
+			} else mMinus.add(lastObservation);
+		}
+		filteredCandidateGoals = this.filterCandidateGoalsUsingLandmarks();
+		System.out.println("\n@@@ Filtered Goals (out of " + this.candidateGoals.size() + "): " + filteredCandidateGoals.size());
+		
+		for(GroundFact goal: filteredCandidateGoals){
+			System.out.println("\n\t # Goal:" + goal);
+			Plan idealPlanOfG = goalsIdealPlans.get(goal);
+			System.out.println("\t # Ideal Plan of G: " + idealPlanOfG.getPlanLength());
+			Plan mPlus = doPlanJavaFF(currentState.getFacts(), goal);
+			List<Action> mMinus = mObservationsGoals.get(goal);
+			System.out.println("\t # mMinus: " + mMinus.size());
+			System.out.println("\t # mPlus: " + mPlus.getPlanLength());
+			float mG = mMinus.size() + mPlus.getPlanLength();
+			float score = this.match(mG, idealPlanOfG.getPlanLength());
+			System.out.println("\t @@@@ Score: " + score);
+			sumOfScores += score;
+			goalsToScores.put(goal, score);
+			goalsToMPlus.put(goal, mPlus.getPlanLength());
+		}
+		float normalizingFactor = (1/sumOfScores);
+		GroundFact mostLikelyGoal = filteredCandidateGoals.iterator().next();
+		float highestProbability = (normalizingFactor*goalsToScores.get(mostLikelyGoal));
+		Map<GroundFact, Float> goalsProbabilities = new HashMap<>();
+		
+		for(GroundFact goal: filteredCandidateGoals){
+			float probabilityOfG = (normalizingFactor*goalsToScores.get(goal));
+			System.out.println("\t - Probability of " + goal + ": " + probabilityOfG);
+			goalsProbabilities.put(goal, probabilityOfG);
+			if(probabilityOfG > highestProbability){
+				mostLikelyGoal = goal;
+				highestProbability = probabilityOfG;
+			}
+		}
+		boolean goalWasRecognizedCorrectly = false;
+		
+		Set<GroundFact> recognizedGoals = new HashSet<>();
+		for(GroundFact goal: goalsProbabilities.keySet()){
+			if(goalsProbabilities.get(goal) == highestProbability)
+				recognizedGoals.add(goal);
+
+			if(recognizedGoals.contains(this.realGoal))
+				goalWasRecognizedCorrectly = true;
+		}
+		int numberOfRecognizedGoals = recognizedGoals.size();
+		long finalTime = System.currentTimeMillis();
+
+		BigDecimal finalTimeBigDecimal = BigDecimal.valueOf(finalTime);
+		BigDecimal initialTimeBigDecimal = BigDecimal.valueOf(initialTime);
+		BigDecimal resultingTime = finalTimeBigDecimal.subtract(initialTimeBigDecimal);
+		
+		BigDecimal totalTime = resultingTime.divide(BigDecimal.valueOf(1000));
+		
+		System.out.println("\n$$$$####> Was the goal recognized correctly? " + goalWasRecognizedCorrectly);
+		System.out.println("\n$$$$####> Number of Recognized Goals: " + numberOfRecognizedGoals);
+		System.out.println("$$$$####> Total time: " + totalTime);
+		return new GoalRecognitionResult(goalWasRecognizedCorrectly, numberOfRecognizedGoals, totalTime);
 	}	
 	
 	@Override
