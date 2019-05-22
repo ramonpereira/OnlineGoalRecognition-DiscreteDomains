@@ -23,7 +23,7 @@ import bean.GoalRecognitionResult;
  * @author ramonfragapereira
  *
  */
-public class OnlineGoalRecognitionUsingHeuristic extends OnlineGoalRecognition {
+public class OnlineGoalRecognitionUsingHeuristic extends GoalRecognition {
 
 	public OnlineGoalRecognitionUsingHeuristic(String fileName) {
 		super(fileName);

@@ -14,7 +14,7 @@ import javaff.planning.STRIPSState;
 import javaff.search.UnreachableGoalException;
 import bean.GoalRecognitionResult;
 
-public class OnlineGoalRecognitionNaive extends OnlineGoalRecognition {
+public class OnlineGoalRecognitionNaive extends GoalRecognition {
 
 	public OnlineGoalRecognitionNaive(String fileName){
 		super(fileName);

@@ -16,7 +16,7 @@ import javaff.data.Plan;
 import javaff.planning.STRIPSState;
 import javaff.search.UnreachableGoalException;
 
-public class OnlineGoalRecognitionMirroringWithLandmarks extends OnlineGoalRecognition {
+public class OnlineGoalRecognitionMirroringWithLandmarks extends GoalRecognition {
 
 	private float threshold;
 	

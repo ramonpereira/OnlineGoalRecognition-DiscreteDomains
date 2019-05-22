@@ -21,7 +21,7 @@ import landmark.LandmarkOrdering;
  * @author ramonfragapereira
  *
  */
-public class OnlineGoalRecognitionUsingLandmarksGoalCompletion extends OnlineGoalRecognition {
+public class OnlineGoalRecognitionUsingLandmarksGoalCompletion extends GoalRecognition {
 
 	private float threshold;
 	

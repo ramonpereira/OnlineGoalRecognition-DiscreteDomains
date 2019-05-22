@@ -19,7 +19,7 @@ import bean.GoalRecognitionResult;
  * @author ramonfragapereira
  *
  */
-public class OnlineGoalRecognitionMirroringNoRecomputation extends OnlineGoalRecognition {
+public class OnlineGoalRecognitionMirroringNoRecomputation extends GoalRecognition {
 
 	public OnlineGoalRecognitionMirroringNoRecomputation(String fileName) {
 		super(fileName);

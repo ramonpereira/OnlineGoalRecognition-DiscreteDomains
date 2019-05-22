@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import bean.GoalRecognitionResult;
 
-public class OnlineGoalRecognitionUsingFactPartitionsForPruning extends OnlineGoalRecognition {
+public class OnlineGoalRecognitionUsingFactPartitionsForPruning extends GoalRecognition {
 
 	public OnlineGoalRecognitionUsingFactPartitionsForPruning(String fileName) {
 		super(fileName);

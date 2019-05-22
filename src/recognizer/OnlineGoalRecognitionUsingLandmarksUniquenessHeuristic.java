@@ -19,7 +19,7 @@ import javaff.search.UnreachableGoalException;
  * @author ramonfragapereira
  *
  */
-public class OnlineGoalRecognitionUsingLandmarksUniquenessHeuristic extends OnlineGoalRecognition {
+public class OnlineGoalRecognitionUsingLandmarksUniquenessHeuristic extends GoalRecognition {
 
 	private float threshold;
 	private Map<GroundFact, Set<Set<Fact>>> mapGoalsLandmarks = new HashMap<>();

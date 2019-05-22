@@ -15,7 +15,7 @@ import recognizer.OnlineGoalRecognitionUsingLandmarksUniquenessHeuristic;
 public class OnlineGoalRecognitionTest {
 
 	public static String GOALRECOGNITION_PROBLEM = 
-			"experiments/hanoi/pb03_hanoi_out_100.tar.bz2";
+			"experiments/ferry/100/ferry_p02_hyp-1_full.tar.bz2";
 	
 	@Test
 	public void testNaiveOnlineGoalRecognition(){

@@ -15,7 +15,7 @@ import java.util.concurrent.TimeoutException;
 import bean.GoalRecognitionResult;
 import javaff.search.UnreachableGoalException;
 import recognizer.OnlineGoalRecognitionNaive;
-import recognizer.OnlineGoalRecognition;
+import recognizer.GoalRecognition;
 import recognizer.OnlineGoalRecognitionMirroringBaseline;
 import recognizer.OnlineGoalRecognitionMirroringNoRecomputation;
 import recognizer.OnlineGoalRecognitionUsingHeuristic;
@@ -50,7 +50,7 @@ public class OnlineGoalRecognitionBenchmark {
 	                	for(int i=1; i<=30; i++){
 		        			System.out.println(fileEntry.toString());
 		        			System.out.println("# RUN: " + i);
-	                		OnlineGoalRecognition onlineRecognizer = getInstantiatedApproach(approach, fileEntry.toString(), (threshold == null ? 0 : threshold));
+	                		GoalRecognition onlineRecognizer = getInstantiatedApproach(approach, fileEntry.toString(), (threshold == null ? 0 : threshold));
 	                		results.add(onlineRecognizer.recognizeOnline());
 	                	}
 	                    return results;
@@ -95,7 +95,7 @@ public class OnlineGoalRecognitionBenchmark {
 	        	FutureTask<GoalRecognitionResult> timeoutTask = new FutureTask<GoalRecognitionResult>(new Callable<GoalRecognitionResult>() {
 	                @Override
 	                public GoalRecognitionResult call() throws Exception {
-	                	OnlineGoalRecognition onlineRecognizer = getInstantiatedApproach(approach, fileEntry.toString(), (threshold == null ? 0 : threshold));
+	                	GoalRecognition onlineRecognizer = getInstantiatedApproach(approach, fileEntry.toString(), (threshold == null ? 0 : threshold));
 	                    return onlineRecognizer.recognizeOnline();
 	                }
 	            });
@@ -149,9 +149,9 @@ public class OnlineGoalRecognitionBenchmark {
 		writeExperimentFile(outputFileContent, folder.getAbsolutePath().toString() + "_" + approach + (threshold != null ? "_" + threshold : ""));
 	}
 	
-	private static OnlineGoalRecognition getInstantiatedApproach(GoalRecognitionApproach approach, String goalRecognitionProblem, float threshold){
-		OnlineGoalRecognition instantiatedApproach = null;
-		if(approach == GoalRecognitionApproach.BASELINE){
+	private static GoalRecognition getInstantiatedApproach(GoalRecognitionApproach approach, String goalRecognitionProblem, float threshold){
+		GoalRecognition instantiatedApproach = null;
+		if(approach == GoalRecognitionApproach.MIRRORING_BASELINE){
 	        instantiatedApproach = new OnlineGoalRecognitionMirroringBaseline(goalRecognitionProblem);
 		} else if(approach == GoalRecognitionApproach.NAIVE){
 			instantiatedApproach = new OnlineGoalRecognitionNaive(goalRecognitionProblem);
@@ -159,7 +159,7 @@ public class OnlineGoalRecognitionBenchmark {
 			instantiatedApproach = new OnlineGoalRecognitionMirroringNoRecomputation(goalRecognitionProblem);
 		} else if(approach == GoalRecognitionApproach.HEURISTIC){
 			instantiatedApproach = new OnlineGoalRecognitionUsingHeuristic(goalRecognitionProblem);
-		} else if(approach == GoalRecognitionApproach.LANDMARKS_BASELINE){
+		} else if(approach == GoalRecognitionApproach.MIRRORING_LANDMARKS){
 				instantiatedApproach = new OnlineGoalRecognitionMirroringWithLandmarks(goalRecognitionProblem, threshold);
 		} else if(approach == GoalRecognitionApproach.LANDMARKS_GOALCOMPLETION_HEURISTIC){
 			instantiatedApproach = new OnlineGoalRecognitionUsingLandmarksGoalCompletion(goalRecognitionProblem, threshold);
