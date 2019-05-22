@@ -15,8 +15,8 @@ public class OfflineGoalRecognitionBenchmark {
 		
 		String contentFile = "Obs % \tAccuracy \tPrecision \tRecall \tF1-score \tFall-out \tMiss-rate \tAvg. Goals \tAvg. Observations \tRecognized Goals \tTime(s) \n";
 		float totalProblems = 0;
-		for(int obs=10; obs<=100; obs+=20){
-			if(obs > 70)
+		for(int obs=25; obs<=100; obs+=25){
+			if(obs > 75)
 				obs = 100;
 			
 			String observability = String.valueOf(obs);
