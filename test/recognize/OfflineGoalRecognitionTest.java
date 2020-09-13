@@ -10,10 +10,10 @@ import recognizer.OnlineGoalRecognitionMirroringWithLandmarks;
 public class OfflineGoalRecognitionTest {
 
 	public static String GOALRECOGNITION_PROBLEM = 
-			"dataset/ferry/50/ferry_p03_hyp-1_50_1.tar.bz2";
+			"dataset/ferry/10/ferry_p01_hyp-2_10_2.tar.bz2";
 	
 	@Test
-	public void testOnlineGoalRecognitionMirroringWithLandmarks(){
+	public void testOfflineGoalRecognitionMirroringWithLandmarks(){
 		float threshold = 0;
 		OnlineGoalRecognitionMirroringWithLandmarks recognizer = new OnlineGoalRecognitionMirroringWithLandmarks(GOALRECOGNITION_PROBLEM, threshold);
 		try {

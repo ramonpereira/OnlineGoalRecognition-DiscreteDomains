@@ -268,6 +268,16 @@ public class OnlineGoalRecognitionMirroringWithLandmarks extends GoalRecognition
 		
 		BigDecimal totalTime = resultingTime.divide(BigDecimal.valueOf(1000));
 		
+		String recognizedGoalsString = "";
+		for(GroundFact goal: recognizedGoals){
+			String goalString = goal.toString().replace("(and ", "");
+			goalString = goalString.replace(" )", "");
+			goalString = goalString.replace(")  (", "),  (");
+			recognizedGoalsString  += goalString + "\n";
+		}
+		recognizedGoalsString += totalTime;
+		writeExperimentFile(recognizedGoalsString, this.recognitionFileName.replace(".tar.bz2", ""));
+		
 		System.out.println("\n$$$$####> Was the goal recognized correctly? " + goalWasRecognizedCorrectly);
 		System.out.println("\n$$$$####> Number of Recognized Goals: " + numberOfRecognizedGoals);
 		System.out.println("$$$$####> Total time: " + totalTime);
