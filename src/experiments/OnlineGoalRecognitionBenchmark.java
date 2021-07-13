@@ -12,10 +12,10 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import bean.GoalRecognitionResult;
 import javaff.search.UnreachableGoalException;
 import recognizer.OnlineGoalRecognitionNaive;
 import recognizer.GoalRecognition;
+import recognizer.GoalRecognitionResult;
 import recognizer.OnlineGoalRecognitionMirroringBaseline;
 import recognizer.OnlineGoalRecognitionMirroringNoRecomputation;
 import recognizer.OnlineGoalRecognitionUsingHeuristic;

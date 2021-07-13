@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import bean.GoalRecognitionResult;
 import javaff.data.Action;
 import javaff.data.GroundFact;
 import javaff.data.Plan;

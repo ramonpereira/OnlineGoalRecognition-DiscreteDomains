@@ -15,7 +15,6 @@ import javaff.data.GroundFact;
 import javaff.data.Plan;
 import javaff.planning.STRIPSState;
 import javaff.search.UnreachableGoalException;
-import bean.GoalRecognitionResult;
 
 /**
  * Heuristic Approach.

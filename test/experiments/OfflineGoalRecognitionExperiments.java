@@ -6,8 +6,8 @@ import java.io.IOException;
 import org.junit.Test;
 
 import recognizer.GoalRecognition;
+import recognizer.GoalRecognitionResult;
 import recognizer.OnlineGoalRecognitionMirroringWithLandmarks;
-import bean.GoalRecognitionResult;
 
 public class OfflineGoalRecognitionExperiments {
 	

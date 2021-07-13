@@ -4,8 +4,6 @@ import javaff.search.UnreachableGoalException;
 
 import java.io.IOException;
 
-import bean.GoalRecognitionResult;
-
 public class OnlineGoalRecognitionUsingFactPartitionsForPruning extends GoalRecognition {
 
 	public OnlineGoalRecognitionUsingFactPartitionsForPruning(String fileName) {

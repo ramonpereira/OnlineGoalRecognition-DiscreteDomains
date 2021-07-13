@@ -26,7 +26,6 @@ import javaff.search.UnreachableGoalException;
 import landmark.LandmarkExtractor;
 import landmark.LandmarkOrdering;
 import parser.PDDLParser;
-import bean.GoalRecognitionResult;
 import extracting.PartialLandmarkGenerator;
 
 public abstract class GoalRecognition implements Callable<GoalRecognitionResult> {

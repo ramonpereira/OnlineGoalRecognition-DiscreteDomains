@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.IOException;
 
 import recognizer.GoalRecognition;
+import recognizer.GoalRecognitionResult;
 import recognizer.OnlineGoalRecognitionMirroringWithLandmarks;
-import bean.GoalRecognitionResult;
 
 public class OfflineGoalRecognitionBenchmark {
 

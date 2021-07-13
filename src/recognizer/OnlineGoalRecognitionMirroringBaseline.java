@@ -12,7 +12,6 @@ import javaff.data.GroundFact;
 import javaff.data.Plan;
 import javaff.planning.STRIPSState;
 import javaff.search.UnreachableGoalException;
-import bean.GoalRecognitionResult;
 
 /**
  * Baseline Approach (no-recomputation of ideal plans).

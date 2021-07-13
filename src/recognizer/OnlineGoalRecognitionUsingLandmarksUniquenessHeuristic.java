@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import bean.GoalRecognitionResult;
 import javaff.data.Action;
 import javaff.data.Fact;
 import javaff.data.GroundFact;
