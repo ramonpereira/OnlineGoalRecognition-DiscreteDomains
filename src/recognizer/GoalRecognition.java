@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import extracting.PartialLandmarkGenerator;
 import javaff.JavaFF;
 import javaff.data.Action;
 import javaff.data.Fact;
@@ -26,7 +27,6 @@ import javaff.search.UnreachableGoalException;
 import landmark.LandmarkExtractor;
 import landmark.LandmarkOrdering;
 import parser.PDDLParser;
-import extracting.PartialLandmarkGenerator;
 
 public abstract class GoalRecognition implements Callable<GoalRecognitionResult> {
 
@@ -96,6 +96,44 @@ public abstract class GoalRecognition implements Callable<GoalRecognitionResult>
 		} catch (IOException | InterruptedException e){
 			e.printStackTrace();
 		}
+	}
+	
+	public GoalRecognition(String domainFile, String problemFile, String candidateGoalsFile, String observationsFile, String realGoalFile){
+		try{
+			String domainFilePath = "domain.pddl";
+			Path path = Paths.get(domainFile);
+			String domainContent = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+			domainContent = domainContent.replace("(increase (total-cost) 1)", "");
+			File domain = new File("domain.pddl");
+			FileWriter fw = new FileWriter(domain.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write(domainContent);
+			bw.close();
+			
+			String initialFilePath = "templateInitial.pddl";
+			path = Paths.get(problemFile);
+			String initialContent = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+			initialContent = initialContent.replace("<HYPOTHESIS>", "");
+			File templateInitial = new File("templateInitial.pddl");
+			fw = new FileWriter(templateInitial.getAbsoluteFile());
+			bw = new BufferedWriter(fw);
+			bw.write(initialContent);
+			bw.close();
+			
+			this.groundProblem = PDDLParser.getGroundDomainProblem(domainFilePath, initialFilePath);
+			this.observations = PDDLParser.getObservations(groundProblem, observationsFile);
+			this.candidateGoals = PDDLParser.getGoals(groundProblem, candidateGoalsFile);
+			this.realGoal = PDDLParser.getGoals(groundProblem, realGoalFile).get(0);
+			this.initialStateSTRIPS = groundProblem.getSTRIPSInitialState();
+			this.initialSTRIPSState = groundProblem.getSTRIPSInitialState();
+			this.initialState = groundProblem.getSTRIPSInitialState().getFacts();
+			
+			this.goalsToAchievedLandmarksCounter = new HashMap<>();
+			this.goalsToLandmarks = new HashMap<>();
+			this.goalsToObservedLandmarks = new HashMap<>();
+		} catch (IOException e){
+			e.printStackTrace();
+		}	
 	}
 	
 	/**

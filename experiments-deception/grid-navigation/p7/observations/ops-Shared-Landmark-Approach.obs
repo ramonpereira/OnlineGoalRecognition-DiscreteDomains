@@ -1,0 +1,3 @@
+(move p0 c02 c03)
+(move p0 c03 c13)
+(move p0 c13 c23)

@@ -23,6 +23,10 @@ public class OnlineGoalRecognitionMirroringWithLandmarks extends GoalRecognition
 		super(fileName);
 		this.threshold = threshold;
 	}
+	
+	public OnlineGoalRecognitionMirroringWithLandmarks(String domainFile, String problemFile, String candidateGoalsFile, String observationsFile, String realGoalFile){
+		super(domainFile, problemFile, candidateGoalsFile, observationsFile, realGoalFile);
+	}
 
 	@Override
 	public GoalRecognitionResult recognizeOnline() throws UnreachableGoalException, IOException, InterruptedException {
@@ -50,7 +54,7 @@ public class OnlineGoalRecognitionMirroringWithLandmarks extends GoalRecognition
 			goalsIdealPlans.put(goal, idealPlan);
 		}
 		for(Action o: this.observations){
-			System.out.println("$> Observation (" + (int) observationCounter + ") :" + o);
+			System.out.println("$> Observation (" + (int) observationCounter + "): " + o);
 			observationCounter++;
 			currentState = (STRIPSState) currentState.apply(o);
 			Map<GroundFact, Float> goalsToScores = new HashMap<>();
