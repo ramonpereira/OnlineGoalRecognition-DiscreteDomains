@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -41,6 +42,8 @@ public abstract class GoalRecognition implements Callable<GoalRecognitionResult>
 	protected Map<GroundFact, LandmarkExtractor> goalsToLandmarks;
 	protected Map<GroundFact, Set<Set<Fact>>> goalsToObservedLandmarks;
 	protected Map<GroundFact, Map<Fact, Integer>> goalsToAchievedLandmarksCounter;
+	
+	protected List<Integer> observationsIndexObservabilityLevel = new ArrayList<>();
 	
 	public abstract GoalRecognitionResult recognizeOnline() throws UnreachableGoalException, IOException, InterruptedException;
 	
@@ -122,6 +125,32 @@ public abstract class GoalRecognition implements Callable<GoalRecognitionResult>
 			
 			this.groundProblem = PDDLParser.getGroundDomainProblem(domainFilePath, initialFilePath);
 			this.observations = PDDLParser.getObservations(groundProblem, observationsFile);
+			
+			Integer pct10 = (int) Math.ceil(this.observations.size() * 0.1);
+			Integer pct30 = (int) Math.ceil(this.observations.size() * 0.3);
+			Integer pct50 = (int) Math.ceil(this.observations.size() * 0.5);
+			Integer pct70 = (int) Math.ceil(this.observations.size() * 0.7);
+			Integer pct100 = (int) Math.ceil(this.observations.size() * 1);
+			
+			this.observationsIndexObservabilityLevel.add(pct10-1);
+			this.observationsIndexObservabilityLevel.add(pct30-1);
+			this.observationsIndexObservabilityLevel.add(pct50-1);
+			this.observationsIndexObservabilityLevel.add(pct70-1);
+			this.observationsIndexObservabilityLevel.add(pct100-1);
+			
+			/*
+			System.out.println();
+			System.out.println(pct10);
+			System.out.println(pct30);
+			System.out.println(pct50);
+			System.out.println(pct70);
+			System.out.println(pct100);
+			System.out.println();
+			
+			
+			System.out.println(this.observationsIndexObservabilityLevel);
+			*/
+			
 			this.candidateGoals = PDDLParser.getGoals(groundProblem, candidateGoalsFile);
 			this.realGoal = PDDLParser.getGoals(groundProblem, realGoalFile).get(0);
 			this.initialStateSTRIPS = groundProblem.getSTRIPSInitialState();

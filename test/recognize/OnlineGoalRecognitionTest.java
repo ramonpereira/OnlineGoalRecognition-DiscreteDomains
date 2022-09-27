@@ -92,22 +92,21 @@ public class OnlineGoalRecognitionTest {
 
 	
 	public static String GOALRECOGNITION_PROBLEM_PATH = 
-			"experiments-deception/blocks-words/p1/";
+			"experiments-deception/blocks-words/p4/";
 	
 	public static String DECEPTIVE_APPROACH = 
 //			"ops-vanilla.obs";
 //			"ops-Combined-Landmarks-Approach.obs";
 //			"ops-Most-Common-Landmarks.obs";
 //			"ops-Shared-Landmark-Approach.obs";
-//			"ops-R-All-but-Real-Minimum-Coverinst-State-Approach.obs";
+			"ops-R-All-but-Real-Minimum-Coverinst-State-Approach.obs";
 //			"ops-R-All-but-Real-Centroid-Approach.obs";
-//			"ops-R-All-but-Real-Centroid-Approach.obs";
-			"ops-Closest-Minimum-Covering-State-Approach.obs";
+//			"ops-Closest-Minimum-Covering-State-Approach.obs";
 	
 	@Test
-	public void testOnlineGoalRecognitionMirroringWithLandmarks1(){
+	public void testOnlineGoalRecognitionMirroringWithLandmarksSeparateFiles(){
 		String domain = GOALRECOGNITION_PROBLEM_PATH + "domain.pddl";
-		String problem= GOALRECOGNITION_PROBLEM_PATH + "p01.pddl";
+		String problem= GOALRECOGNITION_PROBLEM_PATH + "template.pddl";
 		String goalsFile = GOALRECOGNITION_PROBLEM_PATH + "hyps.dat";
 		String realGoalFile = GOALRECOGNITION_PROBLEM_PATH + "real_hyp.dat";
 		String observations = GOALRECOGNITION_PROBLEM_PATH + "observations/" + DECEPTIVE_APPROACH;
