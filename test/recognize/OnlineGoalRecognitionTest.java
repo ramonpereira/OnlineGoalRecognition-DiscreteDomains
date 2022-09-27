@@ -106,8 +106,6 @@ public class OnlineGoalRecognitionTest {
 	
 	@Test
 	public void testOnlineGoalRecognitionMirroringWithLandmarks1(){
-		float threshold = 0;
-		
 		String domain = GOALRECOGNITION_PROBLEM_PATH + "domain.pddl";
 		String problem= GOALRECOGNITION_PROBLEM_PATH + "p01.pddl";
 		String goalsFile = GOALRECOGNITION_PROBLEM_PATH + "hyps.dat";
