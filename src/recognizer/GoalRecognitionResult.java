@@ -1,6 +1,7 @@
 package recognizer;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 public class GoalRecognitionResult {
 
@@ -18,6 +19,8 @@ public class GoalRecognitionResult {
 	private int numberOfRecognizedGoals;
 	
 	private boolean goalWasRecognized;
+	
+	private Map<Integer, Boolean> obsLevelToRecognizedCorrectly;
 	
 	private BigDecimal totalTime;
 	private String problemFilename;
@@ -71,6 +74,24 @@ public class GoalRecognitionResult {
 		this.numberOfCallsPlanner = numberOfCallsPlanner;
 	}
 	
+	public GoalRecognitionResult(String problemFilename, float truePositiveRatio, float falsePositiveRatio, float falseNegativeRatio, 
+			float rankedFirstPercent, float convergenceFirstPercent, BigDecimal totalTime, 
+			float numberOfCandidateGoals, float numberOfObservations, 
+			float numberOfLandmarks, float numberOfCallsPlanner, Map<Integer, Boolean> obsLevelToRecognizedCorrectly){
+		this.problemFilename = problemFilename;
+		this.truePositiveRatio = truePositiveRatio;
+		this.falsePositiveRatio = falsePositiveRatio;
+		this.falseNegativeRatio = falseNegativeRatio;
+		this.rankedFirstPercent = rankedFirstPercent;
+		this.convergenceFirstPercent = convergenceFirstPercent;
+		this.totalTime = totalTime;
+		this.numberOfCandidateGoals = numberOfCandidateGoals;
+		this.numberOfObservations = numberOfObservations;
+		this.numberOfLandmarks = numberOfLandmarks;
+		this.numberOfCallsPlanner = numberOfCallsPlanner;
+		this.obsLevelToRecognizedCorrectly = obsLevelToRecognizedCorrectly;
+	}
+	
 	public float getTruePositiveRatio() {
 		return truePositiveRatio;
 	}
@@ -121,5 +142,9 @@ public class GoalRecognitionResult {
 
 	public boolean getGoalWasRecognized() {
 		return goalWasRecognized;
+	}
+	
+	public Map<Integer, Boolean> getObsLevelToRecognizedCorrectly() {
+		return obsLevelToRecognizedCorrectly;
 	}
 }

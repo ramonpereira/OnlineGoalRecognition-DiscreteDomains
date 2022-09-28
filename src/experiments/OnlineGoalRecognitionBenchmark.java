@@ -13,15 +13,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javaff.search.UnreachableGoalException;
-import recognizer.OnlineGoalRecognitionNaive;
 import recognizer.GoalRecognition;
 import recognizer.GoalRecognitionResult;
 import recognizer.OnlineGoalRecognitionMirroringBaseline;
 import recognizer.OnlineGoalRecognitionMirroringNoRecomputation;
+import recognizer.OnlineGoalRecognitionMirroringWithLandmarks;
+import recognizer.OnlineGoalRecognitionNaive;
 import recognizer.OnlineGoalRecognitionUsingHeuristic;
 import recognizer.OnlineGoalRecognitionUsingLandmarksGoalCompletion;
 import recognizer.OnlineGoalRecognitionUsingLandmarksUniquenessHeuristic;
-import recognizer.OnlineGoalRecognitionMirroringWithLandmarks;
 
 public class OnlineGoalRecognitionBenchmark {
 
@@ -149,6 +149,97 @@ public class OnlineGoalRecognitionBenchmark {
 		writeExperimentFile(outputFileContent, folder.getAbsolutePath().toString() + "_" + approach + (threshold != null ? "_" + threshold : ""));
 	}
 	
+	public static void runExperimentsDeception(final GoalRecognitionApproach approach, String directoryPath, Integer numberOfProblems, String deceptiveApproachObservations) throws UnreachableGoalException, IOException, InterruptedException{
+		List<GoalRecognitionResult> results = new ArrayList<>();
+		long initialTime = System.currentTimeMillis();
+		int numberOfTimeoutProblems = 0;
+
+		for(int i=1; i<=numberOfProblems;i++) {
+			final int index = i;
+			System.out.println("\n@@@@@@@@> Starting recognition process for: \n\n" + directoryPath + "p" + index + "/");
+        	FutureTask<GoalRecognitionResult> timeoutTask = new FutureTask<GoalRecognitionResult>(new Callable<GoalRecognitionResult>() {
+                @Override
+                public GoalRecognitionResult call() throws Exception {
+                	GoalRecognition onlineRecognizer = getInstantiatedApproach(approach, directoryPath + "p" + index + "/", deceptiveApproachObservations);
+                    return onlineRecognizer.recognizeOnline();
+                }
+            });
+        	new Thread(timeoutTask).start();
+        	try {
+				GoalRecognitionResult result = timeoutTask.get(120, TimeUnit.SECONDS);
+				results.add(result);
+			} catch (ExecutionException | TimeoutException e) {
+				numberOfTimeoutProblems++;
+				e.printStackTrace();
+			}
+		}
+		String outputFileContent = "";
+		float totalTopFirstPercentage = 0;
+		float totalConvergencePercentage = 0;
+		float totalCandidateGoals = 0;
+		float totalObservations = 0;
+		float totalLandmarks = 0;
+		float totalNumberOfCallsPlanner = 0;
+		
+		float totalTPR = 0;
+		float totalFPR = 0;
+		float totalFNR = 0;
+		
+		float acc10pctCounter = 0;
+		float acc30pctCounter = 0;
+		float acc50pctCounter = 0;
+		float acc70pctCounter = 0;
+		float acc100pctCounter = 0;
+		
+		for(GoalRecognitionResult goalRecognitionResult: results){
+			totalTopFirstPercentage += goalRecognitionResult.getRankedFirstPercent();
+			totalConvergencePercentage += goalRecognitionResult.getConvergenceFirstPercent();
+			totalCandidateGoals += goalRecognitionResult.getNumberOfCandidateGoals();
+			totalObservations += goalRecognitionResult.getNumberOfObservations();
+			totalLandmarks += goalRecognitionResult.getNumberOfLandmarks();
+			totalNumberOfCallsPlanner += goalRecognitionResult.getNumberOfCallsPlanner();
+			totalTPR += goalRecognitionResult.getTruePositiveRatio();
+			totalFPR += goalRecognitionResult.getFalsePositiveRatio();
+			totalFNR += goalRecognitionResult.getFalseNegativeRatio();
+			
+			if(goalRecognitionResult.getObsLevelToRecognizedCorrectly().get(30) == null)
+				System.out.println();
+			
+			acc10pctCounter += (goalRecognitionResult.getObsLevelToRecognizedCorrectly().get(10) != null && goalRecognitionResult.getObsLevelToRecognizedCorrectly().get(10) ? 1 : 0);
+			acc30pctCounter += (goalRecognitionResult.getObsLevelToRecognizedCorrectly().get(30) != null && goalRecognitionResult.getObsLevelToRecognizedCorrectly().get(30) ? 1 : 0);
+			acc50pctCounter += (goalRecognitionResult.getObsLevelToRecognizedCorrectly().get(50) != null && goalRecognitionResult.getObsLevelToRecognizedCorrectly().get(50) ? 1 : 0);
+			acc70pctCounter += (goalRecognitionResult.getObsLevelToRecognizedCorrectly().get(70) != null && goalRecognitionResult.getObsLevelToRecognizedCorrectly().get(70) ? 1 : 0);
+			acc100pctCounter += (goalRecognitionResult.getObsLevelToRecognizedCorrectly().get(100) ? 1 : 0);
+		}
+		long finalTime = System.currentTimeMillis();
+		float totalTime = ((finalTime - initialTime)/1000);
+		float totalProblems = results.size();
+		outputFileContent += "# Average Ranked First Percent (%): " + (totalTopFirstPercentage/totalProblems);
+		outputFileContent += "\n# Average Convergence Percent (%): " + (totalConvergencePercentage/totalProblems);
+		outputFileContent += "\n# Average Run-Time (sec): " + (totalTime / totalProblems);
+		outputFileContent += "\n\n# Average Candidate Goals: " + (totalCandidateGoals / totalProblems);
+		outputFileContent += "\n# Average Number of Observed Actions: " + (totalObservations / totalProblems);
+		outputFileContent += "\n# Average Number of Landmarks: " + (totalLandmarks / totalProblems);
+		outputFileContent += "\n# Average Number of Calls to Planner: " + (totalNumberOfCallsPlanner / totalProblems);
+		outputFileContent += "\n\n# True Positive Ratio (TPR): " + (totalTPR / totalProblems);
+		outputFileContent += "\n# False Positive Ratio (FPR): " + (totalFPR / totalProblems);
+		outputFileContent += "\n# False Negative Ratio (FNR): " + (totalFNR / totalProblems);
+		outputFileContent += "\n# Total Problems with Timeout: " + numberOfTimeoutProblems;
+		
+		outputFileContent += "\n\n# Accuracy 10% : " + (acc10pctCounter / totalProblems);
+		outputFileContent += "\n# Accuracy 30% : " + (acc30pctCounter / totalProblems);
+		outputFileContent += "\n# Accuracy 50% : " + (acc50pctCounter / totalProblems);
+		outputFileContent += "\n# Accuracy 70% : " + (acc70pctCounter / totalProblems);
+		outputFileContent += "\n# Accuracy 100%: " + (acc100pctCounter / totalProblems);
+		
+		outputFileContent += "\n\n# Total Problems: " + totalProblems;
+		
+		String deceptiveApproachName = deceptiveApproachObservations.replace("ops", "");
+		deceptiveApproachName = deceptiveApproachName.replace(".obs", "");
+		
+		writeExperimentFile(outputFileContent, directoryPath + "" + approach + "" + deceptiveApproachName);
+	}
+	
 	private static GoalRecognition getInstantiatedApproach(GoalRecognitionApproach approach, String goalRecognitionProblem, float threshold){
 		GoalRecognition instantiatedApproach = null;
 		if(approach == GoalRecognitionApproach.MIRRORING_BASELINE){
@@ -165,6 +256,23 @@ public class OnlineGoalRecognitionBenchmark {
 			instantiatedApproach = new OnlineGoalRecognitionUsingLandmarksGoalCompletion(goalRecognitionProblem, threshold);
 		} else if(approach == GoalRecognitionApproach.LANDMARKS_UNIQUENESS_HEURISTIC){
 			instantiatedApproach = new OnlineGoalRecognitionUsingLandmarksUniquenessHeuristic(goalRecognitionProblem, threshold);
+		}
+		
+		return instantiatedApproach;
+	}
+	
+	private static GoalRecognition getInstantiatedApproach(GoalRecognitionApproach approach, String benchmarksDomainPath, String deceptiveApproachObservations){
+		String domain = benchmarksDomainPath + "domain.pddl";
+		String problem= benchmarksDomainPath + "template.pddl";
+		String goalsFile = benchmarksDomainPath + "hyps.dat";
+		String realGoalFile = benchmarksDomainPath + "real_hyp.dat";
+		String observations = benchmarksDomainPath + "observations/" + deceptiveApproachObservations;
+		
+		GoalRecognition instantiatedApproach = null;
+		if(approach == GoalRecognitionApproach.MIRRORING_BASELINE){
+	        instantiatedApproach = new OnlineGoalRecognitionMirroringBaseline(domain, problem, goalsFile, observations, realGoalFile);
+		} else if(approach == GoalRecognitionApproach.MIRRORING_LANDMARKS){
+			instantiatedApproach = new OnlineGoalRecognitionMirroringWithLandmarks(domain, problem, goalsFile, observations, realGoalFile);
 		}
 		
 		return instantiatedApproach;
