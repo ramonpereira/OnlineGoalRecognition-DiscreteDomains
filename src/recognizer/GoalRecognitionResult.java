@@ -45,7 +45,7 @@ public class GoalRecognitionResult {
 	public GoalRecognitionResult(float truePositiveRatio, float falsePositiveRatio, float falseNegativeRatio, 
 			float rankedFirstPercent, float convergenceFirstPercent, 
 			float numberOfCandidateGoals, float numberOfObservations, 
-			float numberOfLandmarks, float numberOfCallsPlanner){
+			float numberOfLandmarks, float numberOfCallsPlanner, Map<Integer, Boolean> obsLevelToRecognizedCorrectly){
 		this.truePositiveRatio = truePositiveRatio;
 		this.falsePositiveRatio = falsePositiveRatio;
 		this.falseNegativeRatio = falseNegativeRatio;
@@ -55,6 +55,7 @@ public class GoalRecognitionResult {
 		this.numberOfObservations = numberOfObservations;
 		this.numberOfLandmarks = numberOfLandmarks;
 		this.numberOfCallsPlanner = numberOfCallsPlanner;
+		this.obsLevelToRecognizedCorrectly = obsLevelToRecognizedCorrectly;
 	}
 	
 	public GoalRecognitionResult(String problemFilename, float truePositiveRatio, float falsePositiveRatio, float falseNegativeRatio, 

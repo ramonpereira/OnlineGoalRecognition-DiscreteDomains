@@ -10,6 +10,7 @@ def main() :
 
 	deception_approaches = [
 	'vanilla',
+	'Peta-Goal-to-Real-Goal-Approach',
 
 	'Goal-to-Real-Goal-Approach',
 	'Shared-Landmark-Approach',

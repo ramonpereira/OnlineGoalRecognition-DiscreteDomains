@@ -1,0 +1,6 @@
+(move p0 c21 c22)
+(move p0 c22 c32)
+(move p0 c32 c33)
+(move p0 c33 c43)
+(move p0 c43 c33)
+(move p0 c33 c34)

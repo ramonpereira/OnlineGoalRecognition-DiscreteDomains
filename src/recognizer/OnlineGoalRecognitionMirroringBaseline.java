@@ -1,5 +1,6 @@
 package recognizer;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,6 +44,8 @@ public class OnlineGoalRecognitionMirroringBaseline extends GoalRecognition {
 		float TPR = 0;
 		float FPR = 0;
 		float FNR = 0;
+		
+		long initialTime = System.currentTimeMillis();
 		
 		for(GroundFact goal: this.candidateGoals){
 			System.out.println("\t # Goal:" + goal);
@@ -100,7 +103,12 @@ public class OnlineGoalRecognitionMirroringBaseline extends GoalRecognition {
 			float falsePositiveCounter = 0;
 			float falseNegativeCounter = 0;
 			float numberOfRecognizedGoals = recognizedGoals.size();
-			returnedGoals += numberOfRecognizedGoals; 
+			returnedGoals += numberOfRecognizedGoals;
+			
+			if(this.observationsIndexObservabilityLevelToObsLevel.keySet().contains((int) observationCounter-1)) {
+				Integer obsLevel = this.observationsIndexObservabilityLevelToObsLevel.get((int) observationCounter-1);
+				this.obsLevelToRecognizedCorrectly.put(obsLevel, recognizedGoals.contains(this.realGoal));
+			}
 			
 			if(recognizedGoals.contains(this.realGoal))
 				truePositiveCounter++;
@@ -127,6 +135,13 @@ public class OnlineGoalRecognitionMirroringBaseline extends GoalRecognition {
 			System.out.println("-> FNR: " + fnr);
 			System.out.println();
 		}
+		long finalTime = System.currentTimeMillis();
+		BigDecimal finalTimeBigDecimal = BigDecimal.valueOf(finalTime);
+		BigDecimal initialTimeBigDecimal = BigDecimal.valueOf(initialTime);
+		BigDecimal resultingTime = finalTimeBigDecimal.subtract(initialTimeBigDecimal);
+		
+//		BigDecimal totalTime = resultingTime.divide(BigDecimal.valueOf(1000));
+		
 		float topFirstRankedPercent  = (topFirstFrequency/observationCounter);
 		float convergencePercent = (convergenceToTopRankedGoal/observationCounter);
 		System.out.println("\n$$$$####> Top First Ranked Percent (%): " + topFirstRankedPercent);
@@ -137,7 +152,8 @@ public class OnlineGoalRecognitionMirroringBaseline extends GoalRecognition {
 		System.out.println("\n$$$$####> True Positive Ratio: " + (TPR/observationCounter));
 		System.out.println("$$$$####> False Positive Ratio: " + (FPR/observationCounter));
 		System.out.println("$$$$####> False Negative Ratio: " + (FNR/observationCounter));
-		return new GoalRecognitionResult((TPR/observationCounter), (FPR/observationCounter), (FNR/observationCounter), topFirstRankedPercent, convergencePercent, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), numberOfCallsPlanner);
+		
+		return new GoalRecognitionResult((TPR/observationCounter), (FPR/observationCounter), (FNR/observationCounter), topFirstRankedPercent, convergencePercent, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), numberOfCallsPlanner, obsLevelToRecognizedCorrectly);
 	}
 	
 	@Override
