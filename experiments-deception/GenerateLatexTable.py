@@ -6,7 +6,7 @@ import math
 def main() :
 	domain_name_path_name = sys.argv[1]
 	
-	goal_recognition_approaches = ['MIRRORING_LANDMARKS']
+	goal_recognition_approaches = ['MIRRORING']
 
 	deception_approaches = [
 	'vanilla',
@@ -56,7 +56,8 @@ def main() :
 					if 'Average Run-Time' in l:
 						time = l.split(' (sec): ')[1]
 
-			d_approach_name = file.replace('MIRRORING_LANDMARKS-', '')
+			# d_approach_name = file.replace('MIRRORING_LANDMARKS-', '')
+			d_approach_name = file.replace('MIRRORING_BASELINE-', '')
 			d_approach_name = d_approach_name.replace('.txt', '')
 			deception_approaches_results[d_approach_name] = (ranked_first, convergence, time)
 	
