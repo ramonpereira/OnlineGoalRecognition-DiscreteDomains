@@ -114,8 +114,14 @@ public class OnlineGoalRecognitionMirroringWithLandmarks extends GoalRecognition
 			float numberOfRecognizedGoals = recognizedGoals.size();
 			returnedGoals += numberOfRecognizedGoals; 
 			
-			if(recognizedGoals.contains(this.realGoal))
+			if(this.observationsIndexObservabilityLevelToObsLevel.keySet().contains((int) observationCounter-1)) {
+				Integer obsLevel = this.observationsIndexObservabilityLevelToObsLevel.get((int) observationCounter-1);
+				this.obsLevelToRecognizedCorrectly.put(obsLevel, recognizedGoals.contains(this.realGoal));
+			}
+			
+			if(recognizedGoals.contains(this.realGoal)) {
 				truePositiveCounter++;
+			}
 			
 			if(recognizedGoals.size() == 1 && recognizedGoals.contains(this.realGoal)){
 				topFirstFrequency++;
@@ -161,7 +167,9 @@ public class OnlineGoalRecognitionMirroringWithLandmarks extends GoalRecognition
 		System.out.println("\n$$$$####> True Positive Ratio: " + (TPR/observationCounter));
 		System.out.println("$$$$####> False Positive Ratio: " + (FPR/observationCounter));
 		System.out.println("$$$$####> False Negative Ratio: " + (FNR/observationCounter));
-		return new GoalRecognitionResult(this.getRecognitionFileName(), (TPR/observationCounter), (FPR/observationCounter), (FNR/observationCounter), topFirstRankedPercent, convergencePercent, totalTime, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), numberOfCallsPlanner);
+		System.out.println(this.obsLevelToRecognizedCorrectly);
+		
+		return new GoalRecognitionResult(this.getRecognitionFileName(), (TPR/observationCounter), (FPR/observationCounter), (FNR/observationCounter), topFirstRankedPercent, convergencePercent, totalTime, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), numberOfCallsPlanner, obsLevelToRecognizedCorrectly);
 	}
 
 	private Set<GroundFact> filterCandidateGoalsUsingLandmarks() {

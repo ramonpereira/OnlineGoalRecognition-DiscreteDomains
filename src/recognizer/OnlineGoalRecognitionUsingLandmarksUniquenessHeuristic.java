@@ -110,7 +110,7 @@ public class OnlineGoalRecognitionUsingLandmarksUniquenessHeuristic extends Goal
 		System.out.println("\n$$$$####> True Positive Ratio: " + (TPR/observationCounter));
 		System.out.println("$$$$####> False Positive Ratio: " + (FPR/observationCounter));
 		System.out.println("$$$$####> False Negative Ratio: " + (FNR/observationCounter));
-		return new GoalRecognitionResult((TPR/observationCounter), (FPR/observationCounter), (FNR/observationCounter), topFirstRankedPercent, convergencePercent, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), 0);
+		return new GoalRecognitionResult((TPR/observationCounter), (FPR/observationCounter), (FNR/observationCounter), topFirstRankedPercent, convergencePercent, this.candidateGoals.size(), this.observations.size(), this.getAverageOfFactLandmarks(), 0, null);
 	}
 	
 	@Override
